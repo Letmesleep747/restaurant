@@ -18,7 +18,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     // configure other options as needed
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders()
+    .AddDefaultUI();
 
 // Authorization policies (example)
 builder.Services.AddAuthorization(options =>

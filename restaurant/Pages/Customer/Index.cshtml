@@ -1,40 +1,94 @@
 @page
 @model dynamic
 @{
-	ViewData["Title"] = "Customer Dashboard";
+	// This is the customer's front-facing landing page for the Dine & Dash restaurant.
+	// Replace dynamic model with a strongly-typed PageModel when adding server logic.
+	ViewData["Title"] = "Dine & Dash - Welcome";
 }
 
-<div class="container mt-4">
-	<h1>Customer Interface (Placeholder)</h1>
-	<p class="lead">This area will contain customer features: register/profile, browse menu, make reservations, place orders, view history.</p>
+<!-- Hero section -->
+<section class="bg-light py-5">
+	<div class="container text-center">
+		<h1 class="display-4">Welcome to Dine & Dash</h1>
+		<p class="lead">Great food, fast service. Reserve a table or order online in seconds.</p>
+		<p>
+			<a class="btn btn-primary btn-lg me-2" asp-page="/Customer/Reservations/Index">Make a Reservation</a>
+			<a class="btn btn-outline-primary btn-lg" asp-page="/Customer/Menu/Index">Browse Menu</a>
+		</p>
+	</div>
+</section>
 
-	<div class="row">
-		<div class="col-md-4">
-			<div class="card mb-3">
-				<div class="card-body">
-					<h5 class="card-title">Profile</h5>
-					<p class="card-text">Manage your profile and preferences.</p>
-					<a class="btn btn-primary disabled">Open</a>
-				</div>
+<!-- Features -->
+<section class="py-5">
+	<div class="container">
+		<div class="row text-center mb-4">
+			<div class="col-md-4">
+				<h4>Easy Reservations</h4>
+				<p>Create and manage your bookings with realtime availability checks.</p>
+			</div>
+			<div class="col-md-4">
+				<h4>Digital Menu</h4>
+				<p>Browse our menu with prices, descriptions and dietary labels.</p>
+			</div>
+			<div class="col-md-4">
+				<h4>Fast Orders</h4>
+				<p>Order for dine-in or takeaway and track status live.</p>
 			</div>
 		</div>
-		<div class="col-md-4">
-			<div class="card mb-3">
-				<div class="card-body">
-					<h5 class="card-title">Reservations</h5>
-					<p class="card-text">Make, modify or cancel table reservations.</p>
-					<a class="btn btn-primary disabled">Open</a>
+
+		<!-- Menu preview (static samples) -->
+		<h3 class="mb-3">Popular Dishes</h3>
+		<div class="row">
+			<div class="col-md-4">
+				<div class="card mb-4 shadow-sm">
+					<img src="~/images/sample-pizza.jpg" class="card-img-top" alt="Margherita Pizza" onerror="this.style.display='none'" />
+					<div class="card-body">
+						<h5 class="card-title">Margherita Pizza</h5>
+						<p class="card-text">Tomato, mozzarella, basil — simple and delicious.</p>
+						<div class="d-flex justify-content-between align-items-center">
+							<small class="text-muted">$8.99</small>
+							<button class="btn btn-sm btn-outline-secondary disabled">Order</button>
+						</div>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="col-md-4">
-			<div class="card mb-3">
-				<div class="card-body">
-					<h5 class="card-title">Menu & Orders</h5>
-					<p class="card-text">Browse menu and place orders.</p>
-					<a class="btn btn-primary disabled">Open</a>
+			<div class="col-md-4">
+				<div class="card mb-4 shadow-sm">
+					<img src="~/images/sample-burger.jpg" class="card-img-top" alt="Classic Burger" onerror="this.style.display='none'" />
+					<div class="card-body">
+						<h5 class="card-title">Classic Burger</h5>
+						<p class="card-text">Beef patty, lettuce, tomato and house sauce.</p>
+						<div class="d-flex justify-content-between align-items-center">
+							<small class="text-muted">$7.50</small>
+							<button class="btn btn-sm btn-outline-secondary disabled">Order</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card mb-4 shadow-sm">
+					<img src="~/images/sample-salad.jpg" class="card-img-top" alt="Caesar Salad" onerror="this.style.display='none'" />
+					<div class="card-body">
+						<h5 class="card-title">Caesar Salad</h5>
+						<p class="card-text">Crisp romaine, parmesan, croutons and creamy dressing.</p>
+						<div class="d-flex justify-content-between align-items-center">
+							<small class="text-muted">$6.25</small>
+							<button class="btn btn-sm btn-outline-secondary disabled">Order</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
+</section>
+
+<!-- Call to action / Contact -->
+<section class="bg-primary text-white py-4">
+	<div class="container text-center">
+		<h4>Visit Dine & Dash</h4>
+		<p class="mb-1">123 Flavor Street, Foodtown</p>
+		<p class="mb-0">Open daily: 11:00 AM - 10:00 PM</p>
+	</div>
+</section>
+
+<!-- Notes: images are optional. Replace sample images with real assets in wwwroot/images. -->

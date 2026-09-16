@@ -13,7 +13,9 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">restaurant</a>
+                <!--header name -->
+                <a class="navbar-brand" asp-area="" asp-page="/Index">Dine & Dash</a>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -26,14 +28,41 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" id="rolesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Roles</a>
-                            <ul class="dropdown-menu" aria-labelledby="rolesDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-page="/Customer/Index">Customer UI</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-page="/Staff/Index">Staff UI</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-page="/Admin/Index">Admin UI</a></li>
-                            </ul>
-                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        @if (User?.Identity?.IsAuthenticated ?? false)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Account/Manage/Index">My Account</a>
+                            </li>
+                            @* Show Staff/Admin links only to users in those roles *@
+                            @if (User.IsInRole("Staff"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/Staff/Index">Staff</a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Administrator"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/Admin/Index">Admin</a>
+                                </li>
+                            }
+                            <li class="nav-item">
+                                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" method="post" id="logoutForm">
+                                    <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
@@ -47,7 +76,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2026 - restaurant - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            &copy; 2026 - Dine & Dash - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>
     </footer>
 

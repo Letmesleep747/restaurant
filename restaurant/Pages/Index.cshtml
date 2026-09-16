@@ -1,10 +1,13 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    // The home page redirects to the Customer front-facing landing page (Dine & Dash).
+    // Redirection is handled in Pages/Index.cshtml.cs to keep the URL clean.
+    ViewData["Title"] = "Home";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Welcome to Dine & Dash</h1>
+    <p class="lead">Redirecting to the customer site...</p>
+    <p>If you are not redirected automatically, <a asp-page="/Customer/Index">click here</a>.</p>
 </div>

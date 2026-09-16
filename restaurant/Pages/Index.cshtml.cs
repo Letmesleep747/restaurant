@@ -5,9 +5,10 @@ namespace restaurant.Pages
 {
     public class IndexModel : PageModel
     {
-        public void OnGet()
+        public IActionResult OnGet()
         {
-
+            // Redirect the site root to the customer-facing landing page
+            return RedirectToPage("/Customer/Index");
         }
     }
 }

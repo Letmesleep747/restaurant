@@ -1,6 +1,9 @@
 @page
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Staff")]
 @model dynamic
 @{
+	// Only users in the Staff role should access this page.
 	ViewData["Title"] = "Staff Dashboard";
 }
 
