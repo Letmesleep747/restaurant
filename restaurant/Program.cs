@@ -68,35 +68,62 @@ using (var scope = app.Services.CreateScope())
             // swallow - we'll let subsequent calls surface an error with more context
         }
     }
-    // Seed roles
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    string[] roles = new[] { "Administrator", "Staff", "Customer" };
-    foreach (var role in roles)
+    // Verify DB connectivity before attempting Identity seeding
+    var canConnect = false;
+    try
     {
-        if (!await roleManager.RoleExistsAsync(role))
-        {
-            await roleManager.CreateAsync(new IdentityRole(role));
-        }
+        canConnect = await db.Database.CanConnectAsync();
+    }
+    catch
+    {
+        canConnect = false;
     }
 
-    // Create a default admin user for development/testing and assign the Administrator role
-    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-    var adminEmail = builder.Configuration["AdminUser:Email"] ?? "admin@local";
-    var adminPassword = builder.Configuration["AdminUser:Password"] ?? "P@ssw0rd!23";
-    var adminUser = await userManager.FindByEmailAsync(adminEmail);
-    if (adminUser == null)
+    if (!canConnect)
     {
-        adminUser = new ApplicationUser { UserName = adminEmail, Email = adminEmail, FullName = "Administrator" };
-        var createResult = await userManager.CreateAsync(adminUser, adminPassword);
-        if (createResult.Succeeded)
-        {
-            await userManager.AddToRoleAsync(adminUser, "Administrator");
-        }
+        // Unable to connect to DB — skip seeding to avoid exceptions during startup.
+        Console.WriteLine("Warning: Cannot connect to the database. Skipping role/user seeding.");
     }
     else
     {
-        if (!await userManager.IsInRoleAsync(adminUser, "Administrator"))
-            await userManager.AddToRoleAsync(adminUser, "Administrator");
+        // Seed roles and default admin user (wrapped to avoid throwing on failure)
+        try
+        {
+            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+            string[] roles = new[] { "Administrator", "Staff", "Customer" };
+            foreach (var role in roles)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }
+
+            // Create a default admin user for development/testing and assign the Administrator role
+            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+            var adminEmail = builder.Configuration["AdminUser:Email"] ?? "admin@local";
+            var adminPassword = builder.Configuration["AdminUser:Password"] ?? "P@ssw0rd!23";
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+            if (adminUser == null)
+            {
+                adminUser = new ApplicationUser { UserName = adminEmail, Email = adminEmail, FullName = "Administrator" };
+                var createResult = await userManager.CreateAsync(adminUser, adminPassword);
+                if (createResult.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(adminUser, "Administrator");
+                }
+            }
+            else
+            {
+                if (!await userManager.IsInRoleAsync(adminUser, "Administrator"))
+                    await userManager.AddToRoleAsync(adminUser, "Administrator");
+            }
+        }
+        catch (Exception seedEx)
+        {
+            // Log and continue — do not throw to prevent startup failure
+            Console.WriteLine($"Role/user seeding failed: {seedEx.Message}");
+        }
     }
 }
 
