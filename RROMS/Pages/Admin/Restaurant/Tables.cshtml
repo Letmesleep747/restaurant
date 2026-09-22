@@ -1,0 +1,117 @@
+﻿@page
+@model RROMS.Pages.Admin.Restaurant.TablesModel
+
+@{
+    ViewData["Title"] = "Tables";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-heading">
+
+    <div>
+        <h2>Table Management</h2>
+
+        <p>
+            Manage restaurant tables, seating capacity and dining areas.
+        </p>
+    </div>
+
+    <button class="btn btn-primary"
+            type="button"
+            disabled>
+
+        <i class="bi bi-plus-lg"></i>
+        Add Table
+
+    </button>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="content-card-header">
+
+        <div>
+            <h5>Restaurant Tables</h5>
+
+            <small class="text-muted">
+                Current table configuration
+            </small>
+        </div>
+
+        <span class="badge text-bg-light">
+            @Model.RestaurantTables.Count Tables
+        </span>
+
+    </div>
+
+
+    <div class="table-responsive">
+
+        <table class="table admin-table">
+
+            <thead>
+
+                <tr>
+                    <th>Table</th>
+                    <th>Dining Area</th>
+                    <th>Capacity</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                @foreach (var table in Model.RestaurantTables)
+                {
+                    <tr>
+
+                        <td>
+                            <strong>@table.TableNumber</strong>
+                        </td>
+
+                        <td>@table.DiningArea</td>
+
+                        <td>
+                            @table.Capacity persons
+                        </td>
+
+                        <td>
+
+                            @if (table.IsActive)
+                            {
+                                <span class="status-badge active">
+                                    Active
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="status-badge inactive">
+                                    Inactive
+                                </span>
+                            }
+
+                        </td>
+
+                        <td>
+
+                            <button class="btn btn-sm btn-outline-secondary"
+                                    disabled>
+                                Edit
+                            </button>
+
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

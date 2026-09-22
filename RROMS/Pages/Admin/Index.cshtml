@@ -1,0 +1,204 @@
+﻿@page
+@model RROMS.Pages.Admin.IndexModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-heading">
+    <div>
+        <h2>Admin Dashboard</h2>
+        <p>
+            Overview of restaurant operations and management.
+        </p>
+    </div>
+</div>
+
+
+<div class="row g-4">
+
+    <div class="col-xl-3 col-md-6">
+        <div class="dashboard-card">
+
+            <div class="dashboard-card-icon">
+                <i class="bi bi-layout-text-window"></i>
+            </div>
+
+            <div>
+                <span class="dashboard-label">
+                    Total Tables
+                </span>
+
+                <h3>@Model.Dashboard.TotalTables</h3>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-xl-3 col-md-6">
+        <div class="dashboard-card">
+
+            <div class="dashboard-card-icon">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+
+            <div>
+                <span class="dashboard-label">
+                    Today's Reservations
+                </span>
+
+                <h3>@Model.Dashboard.TodayReservations</h3>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-xl-3 col-md-6">
+        <div class="dashboard-card">
+
+            <div class="dashboard-card-icon">
+                <i class="bi bi-receipt"></i>
+            </div>
+
+            <div>
+                <span class="dashboard-label">
+                    Today's Orders
+                </span>
+
+                <h3>@Model.Dashboard.TodayOrders</h3>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-xl-3 col-md-6">
+        <div class="dashboard-card">
+
+            <div class="dashboard-card-icon">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+
+            <div>
+                <span class="dashboard-label">
+                    Today's Sales
+                </span>
+
+                <h3>
+                    RM @Model.Dashboard.TodaySales.ToString("N2")
+                </h3>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<div class="row g-4 mt-1">
+
+    <div class="col-lg-8">
+
+        <div class="content-card">
+
+            <div class="content-card-header">
+                <h5>Restaurant Management</h5>
+
+                <span class="badge text-bg-light">
+                    Sprint 1
+                </span>
+            </div>
+
+            <p class="text-muted">
+                Configure dining areas, restaurant tables and operating hours.
+            </p>
+
+            <div class="row g-3 mt-2">
+
+                <div class="col-md-4">
+                    <a asp-page="/Admin/Restaurant/DiningAreas"
+                       class="quick-action">
+
+                        <i class="bi bi-building"></i>
+
+                        <div>
+                            <strong>Dining Areas</strong>
+                            <span>Manage restaurant sections</span>
+                        </div>
+
+                    </a>
+                </div>
+
+
+                <div class="col-md-4">
+                    <a asp-page="/Admin/Restaurant/Tables"
+                       class="quick-action">
+
+                        <i class="bi bi-layout-text-window"></i>
+
+                        <div>
+                            <strong>Tables</strong>
+                            <span>Manage table information</span>
+                        </div>
+
+                    </a>
+                </div>
+
+
+                <div class="col-md-4">
+                    <a asp-page="/Admin/Restaurant/OperatingHours"
+                       class="quick-action">
+
+                        <i class="bi bi-clock"></i>
+
+                        <div>
+                            <strong>Operating Hours</strong>
+                            <span>Manage opening hours</span>
+                        </div>
+
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-lg-4">
+
+        <div class="content-card">
+
+            <div class="content-card-header">
+                <h5>Development Status</h5>
+            </div>
+
+            <div class="development-item">
+                <i class="bi bi-check-circle-fill"></i>
+                Admin layout
+            </div>
+
+            <div class="development-item">
+                <i class="bi bi-check-circle-fill"></i>
+                Dashboard
+            </div>
+
+            <div class="development-item">
+                <i class="bi bi-check-circle-fill"></i>
+                Restaurant pages
+            </div>
+
+            <div class="development-item pending">
+                <i class="bi bi-circle"></i>
+                Database integration
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
