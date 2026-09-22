@@ -1,4 +1,6 @@
-﻿namespace restaurant.Models
+﻿using restaurant.Models.Shared;
+
+namespace restaurant.Models
 {
     public class OrderItem
     {
