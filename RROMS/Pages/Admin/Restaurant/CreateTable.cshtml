@@ -1,0 +1,193 @@
+﻿@page
+@model RROMS.Pages.Admin.Restaurant.CreateTableModel
+
+@{
+    ViewData["Title"] = "Add Table";
+    Layout = "_AdminLayout";
+}
+
+
+<div class="page-heading">
+
+    <div>
+
+        <h2>Add Restaurant Table</h2>
+
+        <p>
+            Add a new table and assign it to
+            an active dining area.
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="row">
+
+    <div class="col-lg-7 col-xl-6">
+
+        <div class="content-card">
+
+            @if (Model.DiningAreas.Count == 0)
+            {
+                <div class="alert alert-warning">
+
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+
+                    No active dining areas are available.
+
+                    Please create or activate a dining area
+                    before adding a restaurant table.
+
+                </div>
+
+
+                <a asp-page="/Admin/Restaurant/DiningAreas"
+                   class="btn btn-outline-secondary">
+
+                    Back to Dining Areas
+
+                </a>
+            }
+
+            else
+            {
+                <form method="post">
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="text-danger mb-3">
+                    </div>
+
+
+
+                    <!-- Dining Area -->
+                    <div class="mb-3">
+
+                        <label asp-for="Input.DiningAreaId"
+                               class="form-label">
+                        </label>
+
+
+                        <select asp-for="Input.DiningAreaId"
+                                class="form-select">
+
+                            <option value="0">
+                                -- Select Dining Area --
+                            </option>
+
+
+                            @foreach (var area in Model.DiningAreas)
+                            {
+                                <option value="@area.DiningAreaId">
+                                    @area.Name
+                                </option>
+                            }
+
+                        </select>
+
+
+                        <span asp-validation-for="Input.DiningAreaId"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- Table Number -->
+                    <div class="mb-3">
+
+                        <label asp-for="Input.TableNumber"
+                               class="form-label">
+                        </label>
+
+
+                        <input asp-for="Input.TableNumber"
+                               class="form-control"
+                               placeholder="e.g. T01" />
+
+
+                        <span asp-validation-for="Input.TableNumber"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- Capacity -->
+                    <div class="mb-3">
+
+                        <label asp-for="Input.Capacity"
+                               class="form-label">
+                        </label>
+
+
+                        <input asp-for="Input.Capacity"
+                               type="number"
+                               min="1"
+                               class="form-control"
+                               placeholder="e.g. 4" />
+
+
+                        <span asp-validation-for="Input.Capacity"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- Active -->
+                    <div class="form-check form-switch mb-4">
+
+                        <input asp-for="Input.IsActive"
+                               class="form-check-input" />
+
+
+                        <label asp-for="Input.IsActive"
+                               class="form-check-label">
+
+                            Restaurant table is active
+
+                        </label>
+
+                    </div>
+
+
+
+                    <div class="d-flex justify-content-end gap-2">
+
+                        <a asp-page="/Admin/Restaurant/Tables"
+                           class="btn btn-outline-secondary">
+
+                            Cancel
+
+                        </a>
+
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            <i class="bi bi-check-lg"></i>
+                            Save Table
+
+                        </button>
+
+                    </div>
+
+                </form>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

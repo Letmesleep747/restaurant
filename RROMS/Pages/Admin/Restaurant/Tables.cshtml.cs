@@ -1,60 +1,54 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using RROMS.Models;
+using RROMS.Services.Admin;
 
 namespace RROMS.Pages.Admin.Restaurant
 {
     public class TablesModel : PageModel
     {
-        public List<RestaurantTableItem> RestaurantTables { get; set; }
-            = new List<RestaurantTableItem>();
+        private readonly RestaurantManagementService _restaurantService;
 
-        public void OnGet()
+
+        public TablesModel(
+            RestaurantManagementService restaurantService)
         {
-            RestaurantTables = new List<RestaurantTableItem>
-            {
-                new RestaurantTableItem
-                {
-                    TableNumber = "T01",
-                    DiningArea = "Indoor Dining",
-                    Capacity = 2,
-                    IsActive = true
-                },
-
-                new RestaurantTableItem
-                {
-                    TableNumber = "T02",
-                    DiningArea = "Indoor Dining",
-                    Capacity = 4,
-                    IsActive = true
-                },
-
-                new RestaurantTableItem
-                {
-                    TableNumber = "T03",
-                    DiningArea = "Outdoor Dining",
-                    Capacity = 4,
-                    IsActive = true
-                },
-
-                new RestaurantTableItem
-                {
-                    TableNumber = "T04",
-                    DiningArea = "Private Room",
-                    Capacity = 8,
-                    IsActive = true
-                }
-            };
+            _restaurantService = restaurantService;
         }
 
 
-        public class RestaurantTableItem
+        public List<RestaurantTable> RestaurantTables { get; set; }
+            = new();
+
+
+        public async Task OnGetAsync()
         {
-            public string TableNumber { get; set; } = string.Empty;
+            RestaurantTables =
+                await _restaurantService.GetRestaurantTablesAsync();
+        }
 
-            public string DiningArea { get; set; } = string.Empty;
 
-            public int Capacity { get; set; }
+        public async Task<IActionResult> OnPostToggleStatusAsync(int id)
+        {
+            var success =
+                await _restaurantService
+                    .ToggleRestaurantTableStatusAsync(id);
 
-            public bool IsActive { get; set; }
+
+            if (!success)
+            {
+                TempData["ErrorMessage"] =
+                    "Restaurant table could not be found.";
+
+                return RedirectToPage();
+            }
+
+
+            TempData["SuccessMessage"] =
+                "Restaurant table status updated successfully.";
+
+
+            return RedirectToPage();
         }
     }
 }

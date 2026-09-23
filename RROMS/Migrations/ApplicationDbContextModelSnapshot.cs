@@ -55,6 +55,60 @@ namespace RROMS.Migrations
 
                     b.ToTable("DiningAreas");
                 });
+
+            modelBuilder.Entity("RROMS.Models.RestaurantTable", b =>
+                {
+                    b.Property<int>("RestaurantTableId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RestaurantTableId"));
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DiningAreaId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("TableNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("RestaurantTableId");
+
+                    b.HasIndex("DiningAreaId");
+
+                    b.HasIndex("TableNumber")
+                        .IsUnique();
+
+                    b.ToTable("RestaurantTables");
+                });
+
+            modelBuilder.Entity("RROMS.Models.RestaurantTable", b =>
+                {
+                    b.HasOne("RROMS.Models.DiningArea", "DiningArea")
+                        .WithMany("RestaurantTables")
+                        .HasForeignKey("DiningAreaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DiningArea");
+                });
+
+            modelBuilder.Entity("RROMS.Models.DiningArea", b =>
+                {
+                    b.Navigation("RestaurantTables");
+                });
 #pragma warning restore 612, 618
         }
     }
