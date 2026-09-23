@@ -1,0 +1,40 @@
+﻿@page
+@model restaurant.Pages.Customer.Orders.IndexModel
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<h1>My Orders</h1>
+
+@if (!Model.Orders.Any())
+{
+    <p class="text-muted">You haven't placed any orders yet. <a asp-page="/Customer/Menu">Browse the menu</a>.</p>
+}
+else
+{
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Order #</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th>Payment</th><th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var o in Model.Orders)
+            {
+                <tr>
+                    <td>@o.Id</td>
+                    <td>@o.OrderDate.ToString("dd MMM yyyy HH:mm")</td>
+                    <td>@o.OrderItems.Sum(i => i.Quantity) item(s)</td>
+                    <td>@o.TotalAmount.ToString("C")</td>
+                    <td><span class="badge text-bg-info">@o.Status</span></td>
+                    <td>
+                        <span class="badge text-bg-@(o.Payment?.Status == restaurant.Models.Enums.PaymentStatus.Paid ? "success" : "secondary")">
+                            @(o.Payment?.Status.ToString() ?? "Unpaid")
+                        </span>
+                    </td>
+                    <td><a class="btn btn-sm btn-outline-primary" asp-page="/Customer/Orders/Details" asp-route-id="@o.Id">Track</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,48 @@
+﻿@page
+@model restaurant.Pages.Customer.Feedback.CreateModel
+@{
+    ViewData["Title"] = "Leave Feedback";
+}
+
+<h1>Leave Feedback</h1>
+
+<div class="card shadow-sm" style="max-width: 600px;">
+    <div class="card-body">
+        <form method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label class="form-label">Which order is this about? (optional)</label>
+                <select asp-for="Input.OrderId" class="form-select">
+                    <option value="">-- General feedback --</option>
+                    @foreach (var o in Model.CompletedOrders)
+                    {
+                        <option value="@o.Id">Order #@o.Id &middot; @o.OrderDate.ToString("dd MMM yyyy")</option>
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Rating" class="form-label">Rating</label>
+                <select asp-for="Input.Rating" class="form-select">
+                    <option value="5">5 - Excellent</option>
+                    <option value="4">4 - Good</option>
+                    <option value="3">3 - Average</option>
+                    <option value="2">2 - Poor</option>
+                    <option value="1">1 - Very Poor</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Comments" class="form-label"></label>
+                <textarea asp-for="Input.Comments" class="form-control" rows="4" placeholder="Tell us about your experience..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Feedback</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,55 @@
+﻿@page
+@model restaurant.Pages.Customer.Orders.CheckoutModel
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<h1>Checkout</h1>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <table class="table align-middle">
+            <thead>
+                <tr><th>Item</th><th>Price</th><th>Qty</th><th>Subtotal</th><th></th></tr>
+            </thead>
+            <tbody id="cart-table-body"></tbody>
+        </table>
+        <div class="text-end fw-bold fs-5">Total: $<span id="cart-total">0.00</span></div>
+    </div>
+</div>
+
+<form method="post" id="place-order-form" class="card shadow-sm">
+    <div class="card-body">
+        @if (Model.UpcomingReservations.Any())
+        {
+            <div class="mb-3">
+                <label class="form-label">Link to a reservation (optional, for dine-in orders)</label>
+                <select asp-for="ReservationId" class="form-select">
+                    <option value="">-- Takeaway / not linked --</option>
+                    @foreach (var r in Model.UpcomingReservations)
+                    {
+                        <option value="@r.Id">
+                            @r.ReservationDate.ToString("dd MMM") at @r.StartTime.ToString(@"hh\:mm") &middot; @r.PartySize guests
+                        </option>
+                    }
+                </select>
+            </div>
+        }
+
+        <div class="mb-3">
+            <label asp-for="Notes" class="form-label">Special instructions (optional)</label>
+            <textarea asp-for="Notes" class="form-control" rows="2"></textarea>
+        </div>
+
+        <div id="cart-hidden-inputs"></div>
+
+        <button type="submit" class="btn btn-success">Place Order</button>
+        <a class="btn btn-outline-secondary" asp-page="/Customer/Menu">Back to Menu</a>
+    </div>
+</form>
+
+@section Scripts {
+    <script src="~/js/customer-cart.js"></script>
+}

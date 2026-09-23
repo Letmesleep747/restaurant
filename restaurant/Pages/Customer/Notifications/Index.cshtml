@@ -1,0 +1,29 @@
+﻿@page
+@model restaurant.Pages.Customer.Notifications.IndexModel
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<h1>Notifications</h1>
+
+@if (!Model.Notifications.Any())
+{
+    <p class="text-muted">You have no notifications yet.</p>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var n in Model.Notifications)
+        {
+            <a class="list-group-item list-group-item-action @(n.LinkUrl == null ? "disabled" : "")"
+               href="@(n.LinkUrl ?? "#")">
+                <div class="d-flex justify-content-between">
+                    <h6 class="mb-1">@n.Title</h6>
+                    <small class="text-muted">@n.CreatedAt.ToLocalTime().ToString("dd MMM HH:mm")</small>
+                </div>
+                <p class="mb-1">@n.Message</p>
+                <span class="badge text-bg-light text-dark border">@n.Type</span>
+            </a>
+        }
+    </div>
+}
