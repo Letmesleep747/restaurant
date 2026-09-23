@@ -1,52 +1,50 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using RROMS.Models;
+using RROMS.Services.Admin;
 
 namespace RROMS.Pages.Admin.Restaurant
 {
     public class DiningAreasModel : PageModel
     {
-        public List<DiningAreaItem> DiningAreas { get; set; }
-            = new List<DiningAreaItem>();
+        private readonly RestaurantManagementService
+            _restaurantService;
 
-        public void OnGet()
+        public DiningAreasModel(
+            RestaurantManagementService restaurantService)
         {
-            DiningAreas = new List<DiningAreaItem>
-            {
-                new DiningAreaItem
-                {
-                    Id = 1,
-                    Name = "Indoor Dining",
-                    Description = "Main air-conditioned dining section.",
-                    IsActive = true
-                },
+            _restaurantService = restaurantService;
+        }
 
-                new DiningAreaItem
-                {
-                    Id = 2,
-                    Name = "Outdoor Dining",
-                    Description = "Outdoor seating section.",
-                    IsActive = true
-                },
+        public List<DiningArea> DiningAreas { get; set; }
+            = new();
 
-                new DiningAreaItem
-                {
-                    Id = 3,
-                    Name = "Private Room",
-                    Description = "Private dining area for groups.",
-                    IsActive = true
-                }
-            };
+
+        public async Task OnGetAsync()
+        {
+            DiningAreas =
+                await _restaurantService.GetDiningAreasAsync();
         }
 
 
-        public class DiningAreaItem
+        public async Task<IActionResult> OnPostToggleStatusAsync(
+            int id)
         {
-            public int Id { get; set; }
+            var success =
+                await _restaurantService.ToggleDiningAreaStatusAsync(id);
 
-            public string Name { get; set; } = string.Empty;
+            if (!success)
+            {
+                TempData["ErrorMessage"] =
+                    "Dining area could not be found.";
 
-            public string Description { get; set; } = string.Empty;
+                return RedirectToPage();
+            }
 
-            public bool IsActive { get; set; }
+            TempData["SuccessMessage"] =
+                "Dining area status updated successfully.";
+
+            return RedirectToPage();
         }
     }
 }
