@@ -278,5 +278,122 @@ namespace RROMS.Services.Admin
 
             return true;
         }
+
+
+        public async Task EnsureOperatingHoursExistAsync()
+        {
+            var existingDays = await _context.OperatingHours
+                .Select(o => o.Day)
+                .ToListAsync();
+
+
+            foreach (DayOfWeek day in Enum.GetValues<DayOfWeek>())
+            {
+                if (!existingDays.Contains(day))
+                {
+                    _context.OperatingHours.Add(
+                        new OperatingHour
+                        {
+                            Day = day,
+
+                            // Default new schedule to Closed.
+                            // Admin can configure the actual hours.
+                            IsClosed = true,
+
+                            OpeningTime = null,
+
+                            ClosingTime = null,
+
+                            UpdatedAt = DateTime.UtcNow
+                        });
+                }
+            }
+
+
+            await _context.SaveChangesAsync();
+        }
+
+
+        public async Task<List<OperatingHour>>
+            GetOperatingHoursAsync()
+        {
+            await EnsureOperatingHoursExistAsync();
+
+
+            var operatingHours =
+                await _context.OperatingHours
+                    .ToListAsync();
+
+
+            // Display Monday -> Sunday
+            return operatingHours
+                .OrderBy(o =>
+                    o.Day == DayOfWeek.Sunday
+                        ? 7
+                        : (int)o.Day)
+                .ToList();
+        }
+
+
+        public async Task<bool>
+            UpdateOperatingHoursAsync(
+                IEnumerable<OperatingHour> updatedHours)
+        {
+            var hours = updatedHours.ToList();
+
+            var ids = hours
+                .Select(h => h.OperatingHourId)
+                .ToList();
+
+
+            var existingHours =
+                await _context.OperatingHours
+                    .Where(o =>
+                        ids.Contains(o.OperatingHourId))
+                    .ToListAsync();
+
+
+            foreach (var updated in hours)
+            {
+                var existing =
+                    existingHours.FirstOrDefault(
+                        o => o.OperatingHourId
+                             == updated.OperatingHourId);
+
+
+                if (existing == null)
+                {
+                    return false;
+                }
+
+
+                existing.IsClosed =
+                    updated.IsClosed;
+
+
+                if (updated.IsClosed)
+                {
+                    existing.OpeningTime = null;
+                    existing.ClosingTime = null;
+                }
+                else
+                {
+                    existing.OpeningTime =
+                        updated.OpeningTime;
+
+                    existing.ClosingTime =
+                        updated.ClosingTime;
+                }
+
+
+                existing.UpdatedAt =
+                    DateTime.UtcNow;
+            }
+
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

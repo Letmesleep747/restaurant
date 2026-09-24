@@ -56,6 +56,37 @@ namespace RROMS.Migrations
                     b.ToTable("DiningAreas");
                 });
 
+            modelBuilder.Entity("RROMS.Models.OperatingHour", b =>
+                {
+                    b.Property<int>("OperatingHourId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OperatingHourId"));
+
+                    b.Property<TimeSpan?>("ClosingTime")
+                        .HasColumnType("time");
+
+                    b.Property<int>("Day")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
+
+                    b.Property<TimeSpan?>("OpeningTime")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("OperatingHourId");
+
+                    b.HasIndex("Day")
+                        .IsUnique();
+
+                    b.ToTable("OperatingHours");
+                });
+
             modelBuilder.Entity("RROMS.Models.RestaurantTable", b =>
                 {
                     b.Property<int>("RestaurantTableId")
