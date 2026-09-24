@@ -1,0 +1,166 @@
+﻿@page
+@model RROMS.Pages.Staff.DashboardModel
+
+@{
+    ViewData["Title"] = "Staff Dashboard";
+}
+
+<div class="container mt-4">
+
+    <!-- Welcome Section -->
+    <div class="mb-4">
+        <h1>Restaurant Staff Dashboard</h1>
+        <p class="text-muted">
+            Reservation and Order Operational Management
+        </p>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="row">
+
+        <!-- Reservations -->
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Today's Reservations
+                    </h5>
+
+                    <h2 class="mt-3">12</h2>
+
+                    <p class="text-muted">
+                        View and manage customer reservations.
+                    </p>
+
+                    <button class="btn btn-primary">
+                        Manage Reservations
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Orders -->
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Active Orders
+                    </h5>
+
+                    <h2 class="mt-3">8</h2>
+
+                    <p class="text-muted">
+                        View and process customer orders.
+                    </p>
+
+                    <button class="btn btn-success">
+                        Manage Orders
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Payments -->
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Unpaid Bills
+                    </h5>
+
+                    <h2 class="mt-3">3</h2>
+
+                    <p class="text-muted">
+                        View customer payment information.
+                    </p>
+
+                    <button class="btn btn-warning">
+                        Manage Payments
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Reservation Table -->
+    <div class="card shadow-sm mt-4">
+
+        <div class="card-header">
+            <h5 class="mb-0">Today's Reservations</h5>
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Time</th>
+                            <th>Guests</th>
+                            <th>Table</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>John Tan</td>
+                            <td>7:00 PM</td>
+                            <td>4</td>
+                            <td>Table 5</td>
+                            <td>
+                                <span class="badge bg-success">
+                                    Confirmed
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Alice Lee</td>
+                            <td>7:30 PM</td>
+                            <td>2</td>
+                            <td>Table 3</td>
+                            <td>
+                                <span class="badge bg-warning text-dark">
+                                    Pending
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>David Lim</td>
+                            <td>8:00 PM</td>
+                            <td>6</td>
+                            <td>Table 8</td>
+                            <td>
+                                <span class="badge bg-success">
+                                    Confirmed
+                                </span>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
