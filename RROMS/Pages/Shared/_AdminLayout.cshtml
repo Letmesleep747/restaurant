@@ -63,9 +63,12 @@
                     MANAGEMENT
                 </div>
 
-                <a href="#" class="sidebar-link disabled-link">
+                <a asp-page="/Admin/Users/Index"
+                   class="sidebar-link">
+
                     <i class="bi bi-people"></i>
                     <span>User Management</span>
+
                 </a>
 
                 <a href="#" class="sidebar-link disabled-link">
@@ -129,15 +132,42 @@
                 </div>
 
                 <div class="admin-profile">
-                    <div class="profile-icon">
-                        <i class="bi bi-person"></i>
-                    </div>
 
-                    <div class="profile-text">
-                        <span>Administrator</span>
-                        <small>Admin Account</small>
-                    </div>
+                <div class="profile-icon">
+
+                    <i class="bi bi-person"></i>
+
                 </div>
+
+
+                <div class="profile-text">
+
+                    <span>
+                        @User.Identity?.Name
+                    </span>
+
+                    <small>
+                        Administrator
+                    </small>
+
+                </div>
+
+
+    <form method="post"
+          asp-page="/Account/Logout">
+
+        <button type="submit"
+                class="btn btn-sm btn-outline-secondary ms-2">
+
+            <i class="bi bi-box-arrow-right"></i>
+
+            Logout
+
+        </button>
+
+    </form>
+
+</div>
 
             </header>
 

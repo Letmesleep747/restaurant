@@ -1,15 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using RROMS.Models;
 
 namespace RROMS.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext
+        : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(
             DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
+
 
         public DbSet<DiningArea> DiningAreas { get; set; }
 
@@ -18,7 +21,8 @@ namespace RROMS.Data
         public DbSet<OperatingHour> OperatingHours { get; set; }
 
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(
+            ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
@@ -43,7 +47,7 @@ namespace RROMS.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
 
-            // Only one Operating Hour record for each day
+            // One Operating Hour record per day
             modelBuilder.Entity<OperatingHour>()
                 .HasIndex(o => o.Day)
                 .IsUnique();

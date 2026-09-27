@@ -1,0 +1,121 @@
+﻿@page
+@model RROMS.Pages.Admin.Users.IndexModel
+
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="page-heading">
+
+    <div>
+        <h2>User Management</h2>
+
+        <p>
+            View customer and restaurant staff accounts
+            and their assigned roles.
+        </p>
+    </div>
+
+    <button class="btn btn-primary"
+            disabled>
+
+        <i class="bi bi-person-plus"></i>
+        Add Staff
+
+    </button>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="content-card-header">
+
+        <div>
+            <h5>System Accounts</h5>
+
+            <small class="text-muted">
+                Registered RROMS users
+            </small>
+        </div>
+
+        <span class="badge text-bg-light">
+            @Model.Users.Count Users
+        </span>
+
+    </div>
+
+
+    <div class="table-responsive">
+
+        <table class="table admin-table">
+
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach (var user in Model.Users)
+                {
+                    <tr>
+
+                        <td>
+                            <strong>@user.FullName</strong>
+                        </td>
+
+                        <td>
+                            @user.Email
+                        </td>
+
+                        <td>
+                            <span class="badge text-bg-secondary">
+                                @user.Role
+                            </span>
+                        </td>
+
+                        <td>
+                            @if (user.IsActive)
+                            {
+                                <span class="status-badge active">
+                                    Active
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="status-badge inactive">
+                                    Inactive
+                                </span>
+                            }
+                        </td>
+
+                        <td>
+                            @(user.CreatedAt
+                                .ToLocalTime()
+                                .ToString("dd MMM yyyy"))
+                        </td>
+
+                        <td>
+                            <button class="btn btn-sm btn-outline-secondary"
+                                    disabled>
+                                Edit
+                            </button>
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
