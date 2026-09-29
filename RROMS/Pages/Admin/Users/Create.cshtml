@@ -1,0 +1,190 @@
+﻿@page
+@model RROMS.Pages.Admin.Users.CreateModel
+
+@{
+    ViewData["Title"] = "Add User";
+}
+
+<div class="page-heading">
+
+    <div>
+
+        <h2>Add User</h2>
+
+        <p>
+            Create a new staff or system account.
+        </p>
+
+    </div>
+
+    <a asp-page="./Index"
+       class="btn btn-outline-secondary">
+
+        <i class="bi bi-arrow-left"></i>
+        Back
+
+    </a>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="content-card-header">
+
+        <div>
+
+            <h5>Account Information</h5>
+
+            <small class="text-muted">
+                Create a new RROMS user account.
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <form method="post">
+
+        <div asp-validation-summary="ModelOnly"
+             class="alert alert-danger">
+        </div>
+
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+
+                <label asp-for="Input.FullName"
+                       class="form-label">
+                </label>
+
+                <input asp-for="Input.FullName"
+                       class="form-control" />
+
+                <span asp-validation-for="Input.FullName"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+
+            <div class="col-md-6 mb-3">
+
+                <label asp-for="Input.Email"
+                       class="form-label">
+                </label>
+
+                <input asp-for="Input.Email"
+                       class="form-control" />
+
+                <span asp-validation-for="Input.Email"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+
+            <div class="col-md-6 mb-3">
+
+                <label asp-for="Input.PhoneNumber"
+                       class="form-label">
+                </label>
+
+                <input asp-for="Input.PhoneNumber"
+                       class="form-control" />
+
+                <span asp-validation-for="Input.PhoneNumber"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+
+            <div class="col-md-6 mb-3">
+
+                <label asp-for="Input.Role"
+                       class="form-label">
+                </label>
+
+                <select asp-for="Input.Role"
+                        class="form-select">
+
+                    <option value="RestaurantStaff">
+                        Restaurant Staff
+                    </option>
+
+                    <option value="Customer">
+                        Customer
+                    </option>
+
+                    <option value="Administrator">
+                        Administrator
+                    </option>
+
+                </select>
+
+                <span asp-validation-for="Input.Role"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+
+            <div class="col-md-6 mb-3">
+
+                <label asp-for="Input.Password"
+                       class="form-label">
+                </label>
+
+                <input asp-for="Input.Password"
+                       class="form-control" />
+
+                <span asp-validation-for="Input.Password"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+
+            <div class="col-md-6 mb-3">
+
+                <label asp-for="Input.ConfirmPassword"
+                       class="form-label">
+                </label>
+
+                <input asp-for="Input.ConfirmPassword"
+                       class="form-control" />
+
+                <span asp-validation-for="Input.ConfirmPassword"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="mt-3">
+
+            <button type="submit"
+                    class="btn btn-primary">
+
+                <i class="bi bi-person-plus"></i>
+                Create Account
+
+            </button>
+
+            <a asp-page="./Index"
+               class="btn btn-outline-secondary ms-2">
+
+                Cancel
+
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
