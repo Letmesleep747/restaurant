@@ -34,7 +34,7 @@ namespace restaurant.Pages.Customer.Orders
 
             Order = await _db.Orders
                 .Include(o => o.OrderItems).ThenInclude(oi => oi.MenuItem)
-                .Include(o => o.Payment)
+                .Include(o => o.Payments)
                 .Include(o => o.Reservation)
                 .FirstOrDefaultAsync(o => o.Id == id && o.CustomerId == userId);
 
@@ -50,7 +50,7 @@ namespace restaurant.Pages.Customer.Orders
             var userId = _userManager.GetUserId(User);
             if (userId == null) return Challenge();
 
-            var order = await _db.Orders.Include(o => o.Payment)
+            var order = await _db.Orders.Include(o => o.Payments)
                 .FirstOrDefaultAsync(o => o.Id == id && o.CustomerId == userId);
             if (order == null) return NotFound();
 
@@ -67,13 +67,15 @@ namespace restaurant.Pages.Customer.Orders
             var userId = _userManager.GetUserId(User);
             if (userId == null) return Challenge();
 
-            var order = await _db.Orders.Include(o => o.Payment)
+            var order = await _db.Orders.Include(o => o.Payments)
                 .FirstOrDefaultAsync(o => o.Id == id && o.CustomerId == userId);
             if (order == null) return NotFound();
 
-            if (order.Payment == null)
+            var payment = order.Payments.OrderByDescending(p => p.TransactionDate).FirstOrDefault();
+
+            if (payment == null)
             {
-                order.Payment = new Payment
+                var newPayment = new Payment
                 {
                     OrderId = order.Id,
                     Amount = order.TotalAmount,
@@ -82,11 +84,13 @@ namespace restaurant.Pages.Customer.Orders
                     TransactionDate = DateTime.UtcNow,
                     TransactionReference = $"TXN-{Guid.NewGuid().ToString()[..8].ToUpper()}"
                 };
+                order.Payments.Add(newPayment);
+                _db.Payments.Add(newPayment);
             }
             else
             {
-                order.Payment.Status = PaymentStatus.Paid;
-                order.Payment.TransactionDate = DateTime.UtcNow;
+                payment.Status = PaymentStatus.Paid;
+                payment.TransactionDate = DateTime.UtcNow;
             }
 
             await _db.SaveChangesAsync();

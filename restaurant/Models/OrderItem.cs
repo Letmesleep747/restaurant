@@ -11,5 +11,8 @@ namespace restaurant.Models
         public MenuItem MenuItem { get; set; }
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+        public decimal Subtotal => Quantity * UnitPrice;
     }
 }

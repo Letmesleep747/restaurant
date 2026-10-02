@@ -29,7 +29,7 @@ namespace restaurant.Pages.Customer.Orders
 
             Orders = await _db.Orders
                 .Include(o => o.OrderItems).ThenInclude(oi => oi.MenuItem)
-                .Include(o => o.Payment)
+                .Include(o => o.Payments)
                 .Where(o => o.CustomerId == userId)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();

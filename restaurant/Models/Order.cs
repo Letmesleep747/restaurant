@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using restaurant.Models.Enums;
 using restaurant.Models.Shared;
 
@@ -27,30 +28,11 @@ namespace restaurant.Models
         [StringLength(300)]
         public string? Notes { get; set; }
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
-        public Payment? Payment { get; set; }
-    }
-
-    public class OrderItem
-    {
-        public int Id { get; set; }
-
-        [Required]
-        public int OrderId { get; set; }
-        [ForeignKey(nameof(OrderId))]
-        public Order? Order { get; set; }
-        [Required]
-        public int MenuItemId { get; set; }
-
-        [ForeignKey(nameof(MenuItemId))]
-        public MenuItem? MenuItem { get; set; }
-
-        [Range(1, 50)]
-        public int Quantity { get; set; }
-
-        [Column(TypeName = "decimal(8,2)")]
-        public decimal UnitPrice { get; set; }
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
         [NotMapped]
-        public decimal Subtotal => Quantity * UnitPrice;
+        public Payment? Payment => Payments?.OrderByDescending(p => p.TransactionDate).FirstOrDefault();
     }
+
+    // OrderItem moved to its own file (Models/OrderItem.cs)
 }

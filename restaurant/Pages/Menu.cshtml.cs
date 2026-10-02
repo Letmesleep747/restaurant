@@ -8,7 +8,6 @@ using restaurant.Models.Shared;
 
 namespace restaurant.Pages.Customer
 {
-    [Authorize(Roles = "Customer")]
     public class MenuModel : PageModel
     {
         private readonly ApplicationDbContext _db;

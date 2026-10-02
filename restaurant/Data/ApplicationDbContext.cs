@@ -79,8 +79,8 @@ namespace restaurant.Data
 
             builder.Entity<Payment>()
                 .HasOne(p => p.Order)
-                .WithMany(o => o.Payment)
-                .HasForeignKey<Payment>(p => p.OrderId)
+                .WithMany(o => o.Payments)
+                .HasForeignKey(p => p.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Feedback>()

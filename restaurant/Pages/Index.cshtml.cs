@@ -9,7 +9,6 @@ using restaurant.Models.Enums;
 
 namespace restaurant.Pages.Customer
 {
-    [Authorize(Roles = "Customer")]
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _db;
@@ -31,7 +30,18 @@ namespace restaurant.Pages.Customer
         public async Task<IActionResult> OnGetAsync()
         {
             var userId = _userManager.GetUserId(User);
-            if (userId == null) return Challenge();
+
+            if (userId == null)
+            {
+                // Anonymous guest user: provide defaults and allow browsing
+                FullName = "Guest";
+                UpcomingReservationCount = 0;
+                ActiveOrderCount = 0;
+                UnreadNotificationCount = 0;
+                UpcomingReservations = new();
+                RecentOrders = new();
+                return Page();
+            }
 
             var user = await _userManager.FindByIdAsync(userId);
             FullName = user?.FullName ?? User.Identity?.Name ?? "Customer";

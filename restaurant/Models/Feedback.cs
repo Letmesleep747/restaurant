@@ -25,7 +25,7 @@ namespace restaurant.Models
         public int Rating { get; set; }
 
         [StringLength(1000)]
-        public string? Comment { get; set; }
+        public string? Comments { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

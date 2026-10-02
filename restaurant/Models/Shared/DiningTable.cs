@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace restaurant.Models.Shared
 {
@@ -12,6 +13,6 @@ namespace restaurant.Models.Shared
         [Range(1, 20)]
         public int Capacity { get; set; }
         public bool IsActive { get; set; } = true;
-        public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();>
+        public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using restaurant.Models.Enums;
+using restaurant.Models.Shared;
 
 namespace restaurant.Models
 {
@@ -32,13 +33,16 @@ namespace restaurant.Models
 
         [Range(1,20)]
         public int PartySize { get; set; }
-        public ResercationStatus Status { get; set; } = ResercationStatus.Pending;
+        public ReservationStatus Status { get; set; } = ReservationStatus.Pending;
 
         [StringLength(500)]
         public string? SpecialRequests { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
+
+        [NotMapped]
+        public DateTime StartDateTime => ReservationDate.Date + StartTime;
 
         [NotMapped]
         public DateTime EndDateTime => StartDateTime.AddMinutes(DurationMinutes);

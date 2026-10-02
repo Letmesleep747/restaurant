@@ -16,7 +16,7 @@ public class IndexModel : PageModel
     public async Task OnGetAsync()
     {
         Reservations = await _db.Reservations
-            .Include(r => r.User)
+            .Include(r => r.Customer)
             .Include(r => r.Table)
             .ToListAsync();
     }
