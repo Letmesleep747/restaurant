@@ -57,9 +57,11 @@ namespace RROMS.Data.Seed
 
             if (string.IsNullOrWhiteSpace(adminEmail) ||
                 string.IsNullOrWhiteSpace(adminPassword))
-            {
-                return;
-            }
+                        {
+                            throw new Exception(
+                                "SeedAdmin configuration is missing. " +
+                                "Check User Secrets.");
+                        }
 
 
             var admin =

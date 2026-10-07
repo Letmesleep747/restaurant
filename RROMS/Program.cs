@@ -77,6 +77,9 @@ builder.Services.AddScoped<
 
 var app = builder.Build();
 
+await IdentitySeeder.SeedAsync(
+    app.Services,
+    app.Configuration);
 
 if (!app.Environment.IsDevelopment())
 {
@@ -84,22 +87,14 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
 
 app.UseRouting();
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapRazorPages();
-
-await IdentitySeeder.SeedAsync(
-    app.Services,
-    app.Configuration);
-
 
 app.Run();
