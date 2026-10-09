@@ -24,6 +24,8 @@ namespace RROMS.Data
 
         public DbSet<MenuItem> MenuItems { get; set; }
 
+        public DbSet<Promotion> Promotions { get; set; }
+
 
         protected override void OnModelCreating(
             ModelBuilder modelBuilder)
