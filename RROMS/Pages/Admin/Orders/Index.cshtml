@@ -1,0 +1,141 @@
+﻿
+@page
+@model RROMS.Pages.Admin.Orders.IndexModel
+
+@{
+    ViewData["Title"] = "Order Monitoring";
+}
+
+<div class="container-fluid py-4">
+
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1">Order Monitoring</h2>
+        <p class="text-muted mb-0">
+            Monitor customer orders, order progress, and payment information.
+        </p>
+    </div>
+
+    <div class="alert alert-info d-flex align-items-start gap-2">
+        <i class="bi bi-info-circle fs-5"></i>
+        <div>
+            <strong>Database integration pending</strong>
+            <div>
+                Order and payment records will appear here once their
+                tables and models are connected.
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Total Orders</div>
+                    <div class="fs-3 fw-bold">@Model.TotalOrders</div>
+                    <i class="bi bi-receipt text-primary fs-4"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted small">In Progress</div>
+                    <div class="fs-3 fw-bold">@Model.ActiveOrders</div>
+                    <i class="bi bi-hourglass-split text-warning fs-4"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Completed</div>
+                    <div class="fs-3 fw-bold">@Model.CompletedOrders</div>
+                    <i class="bi bi-check-circle text-success fs-4"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Cancelled</div>
+                    <div class="fs-3 fw-bold">@Model.CancelledOrders</div>
+                    <i class="bi bi-x-circle text-danger fs-4"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+
+                <div class="col-12 col-md-4">
+                    <label asp-for="SearchTerm" class="form-label">
+                        Search
+                    </label>
+                    <input asp-for="SearchTerm"
+                           class="form-control"
+                           placeholder="Order ID or customer" />
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <label asp-for="OrderDate" class="form-label">
+                        Order Date
+                    </label>
+                    <input asp-for="OrderDate"
+                           type="date"
+                           class="form-control" />
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <label asp-for="StatusFilter" class="form-label">
+                        Order Status
+                    </label>
+                    <select asp-for="StatusFilter" class="form-select">
+                        <option value="">All statuses</option>
+                        <option value="Placed">Placed</option>
+                        <option value="Preparing">Preparing</option>
+                        <option value="ReadyToServe">Ready to Serve</option>
+                        <option value="Served">Served</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill">
+                        <i class="bi bi-search me-1"></i> Search
+                    </button>
+                    <a asp-page="./Index"
+                       class="btn btn-outline-secondary"
+                       title="Clear filters">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">Order Records</h5>
+        </div>
+
+        <div class="card-body">
+            <div class="text-center py-5">
+                <i class="bi bi-receipt-cutoff display-4 text-muted"></i>
+                <h5 class="mt-3">No order records to display</h5>
+                <p class="text-muted mb-0">
+                    Order records will appear here after integration.
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>

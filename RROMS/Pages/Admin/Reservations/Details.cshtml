@@ -1,0 +1,24 @@
+﻿
+@page "{id:int}"
+@model RROMS.Pages.Admin.Reservations.DetailsModel
+
+@{
+    ViewData["Title"] = "Reservation Details";
+}
+
+<div class="container-fluid py-4">
+    <a asp-page="./Index" class="text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Back to Reservations
+    </a>
+
+    <div class="card border-0 shadow-sm mt-4">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-calendar-check display-4 text-muted"></i>
+            <h3 class="mt-3">Reservation Details</h3>
+            <p class="text-muted">Reservation reference: @Model.Id</p>
+            <p class="text-muted">
+                Actual reservation details will be loaded after database integration.
+            </p>
+        </div>
+    </div>
+</div>
