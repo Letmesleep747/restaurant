@@ -1,0 +1,171 @@
+﻿
+@page
+@model RROMS.Pages.Admin.Reports.IndexModel
+
+@{
+    ViewData["Title"] = "Reports & Analytics";
+}
+
+<div class="container-fluid py-4">
+
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1">Reports & Analytics</h2>
+        <p class="text-muted mb-0">
+            Review restaurant performance and operational statistics.
+        </p>
+    </div>
+
+    @if (Model.ValidationMessage != null)
+    {
+        <div class="alert alert-warning">
+            @Model.ValidationMessage
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="mb-3">Report Period</h5>
+
+            <form method="get" class="row g-3 align-items-end">
+
+                <div class="col-12 col-md-4">
+                    <label asp-for="StartDate" class="form-label">
+                        Start Date
+                    </label>
+                    <input asp-for="StartDate"
+                           type="date"
+                           asp-format="{0:yyyy-MM-dd}"
+                           class="form-control" />
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label asp-for="EndDate" class="form-label">
+                        End Date
+                    </label>
+                    <input asp-for="EndDate"
+                           type="date"
+                           asp-format="{0:yyyy-MM-dd}"
+                           class="form-control" />
+                </div>
+
+                <div class="col-12 col-md-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-funnel me-1"></i>
+                        Apply Filters
+                    </button>
+
+                    <a asp-page="./Index"
+                       class="btn btn-outline-secondary">
+                        Reset
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted small">
+                        Total Reservations
+                    </div>
+                    <div class="fs-3 fw-bold">
+                        @Model.TotalReservations
+                    </div>
+                    <i class="bi bi-calendar-check text-primary fs-4"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted small">
+                        Total Orders
+                    </div>
+                    <div class="fs-3 fw-bold">
+                        @Model.TotalOrders
+                    </div>
+                    <i class="bi bi-receipt text-info fs-4"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted small">
+                        Completed Orders
+                    </div>
+                    <div class="fs-3 fw-bold">
+                        @Model.CompletedOrders
+                    </div>
+                    <i class="bi bi-check-circle text-success fs-4"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted small">
+                        Revenue
+                    </div>
+                    <div class="fs-3 fw-bold">
+                        RM @Model.TotalRevenue.ToString("N2")
+                    </div>
+                    <i class="bi bi-currency-dollar text-warning fs-4"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row g-3">
+
+        <div class="col-12 col-xl-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Reservation Overview</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-4">
+                        <i class="bi bi-calendar2-week display-5 text-muted"></i>
+                        <p class="text-muted mt-3 mb-0">
+                            Reservation statistics will appear
+                            after database integration.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Popular Menu Items</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-4">
+                        <i class="bi bi-trophy display-5 text-muted"></i>
+                        <p class="text-muted mt-3 mb-0">
+                            Popular items will be ranked using
+                            actual order-item records after integration.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="alert alert-info mt-4 mb-0">
+        <i class="bi bi-info-circle me-2"></i>
+        Transaction reports are not connected yet. Figures will be
+        calculated from actual database records once integration is complete.
+    </div>
+
+</div>
