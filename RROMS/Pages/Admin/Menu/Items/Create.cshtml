@@ -1,0 +1,93 @@
+﻿@page
+@model RROMS.Pages.Admin.Menu.Items.CreateModel
+
+@{
+    ViewData["Title"] = "Add Menu Item";
+}
+
+<div class="container py-4" style="max-width: 800px;">
+    <div class="mb-4">
+        <a asp-page="./Index" class="text-decoration-none">
+            <i class="bi bi-arrow-left"></i> Back to Menu Items
+        </a>
+        <h2 class="fw-bold mt-3">Add Menu Item</h2>
+        <p class="text-muted">
+            Add a dish or beverage to the restaurant menu.
+        </p>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Item.Name" class="form-label">
+                        Item Name
+                    </label>
+                    <input asp-for="Item.Name"
+                           class="form-control"
+                           placeholder="e.g. Chicken Chop" />
+                    <span asp-validation-for="Item.Name"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Item.MenuCategoryId"
+                           class="form-label">Category</label>
+                    <select asp-for="Item.MenuCategoryId"
+                            asp-items="Model.Categories"
+                            class="form-select">
+                        <option value="">-- Select a category --</option>
+                    </select>
+                    <span asp-validation-for="Item.MenuCategoryId"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Item.Description"
+                           class="form-label">Description</label>
+                    <textarea asp-for="Item.Description"
+                              class="form-control"
+                              rows="3"
+                              placeholder="Describe the menu item"></textarea>
+                    <span asp-validation-for="Item.Description"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Item.Price"
+                           class="form-label">Price (RM)</label>
+                    <input asp-for="Item.Price"
+                           type="number"
+                           min="0.01"
+                           max="999999.99"
+                           step="0.01"
+                           class="form-control" />
+                    <span asp-validation-for="Item.Price"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="form-check form-switch mb-4">
+                    <input asp-for="Item.IsAvailable"
+                           class="form-check-input" />
+                    <label asp-for="Item.IsAvailable"
+                           class="form-check-label">Available for ordering</label>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-page="./Index"
+                       class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        Save Menu Item
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

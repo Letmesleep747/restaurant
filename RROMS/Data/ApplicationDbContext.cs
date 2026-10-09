@@ -20,6 +20,10 @@ namespace RROMS.Data
 
         public DbSet<OperatingHour> OperatingHours { get; set; }
 
+        public DbSet<MenuCategory> MenuCategories { get; set; }
+
+        public DbSet<MenuItem> MenuItems { get; set; }
+
 
         protected override void OnModelCreating(
             ModelBuilder modelBuilder)
@@ -51,6 +55,23 @@ namespace RROMS.Data
             modelBuilder.Entity<OperatingHour>()
                 .HasIndex(o => o.Day)
                 .IsUnique();
+
+
+            modelBuilder.Entity<MenuCategory>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
+
+
+            modelBuilder.Entity<MenuItem>()
+                .HasOne(m => m.MenuCategory)
+                .WithMany(c => c.MenuItems)
+                .HasForeignKey(m => m.MenuCategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<MenuItem>()
+                .Property(m => m.Price)
+                .HasColumnType("decimal(10,2)");
         }
     }
 }
