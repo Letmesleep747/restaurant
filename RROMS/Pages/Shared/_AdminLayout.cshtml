@@ -1,4 +1,17 @@
 ﻿
+@{
+    var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? "";
+
+    string ActiveClass(string pagePath)
+    {
+        return string.Equals(
+            currentPage,
+            pagePath,
+            StringComparison.OrdinalIgnoreCase)
+            ? "active"
+            : "";
+    }
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,10 +50,11 @@
             </div>
 
             <!-- Navigation -->
-            <nav class="sidebar-nav">
+            <nav class="sidebar-nav" aria-label="Admin navigation">
 
                 <!-- Dashboard -->
-                <a asp-page="/Admin/Index" class="sidebar-link">
+                <a asp-page="/Admin/Index"
+                   class="sidebar-link @ActiveClass("/Admin/Index")">
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </a>
@@ -51,19 +65,19 @@
                 </div>
 
                 <a asp-page="/Admin/Restaurant/DiningAreas"
-                   class="sidebar-link">
+                   class="sidebar-link @ActiveClass("/Admin/Restaurant/DiningAreas")">
                     <i class="bi bi-building"></i>
                     <span>Dining Areas</span>
                 </a>
 
                 <a asp-page="/Admin/Restaurant/Tables"
-                   class="sidebar-link">
+                   class="sidebar-link @ActiveClass("/Admin/Restaurant/Tables")">
                     <i class="bi bi-layout-text-window"></i>
                     <span>Tables</span>
                 </a>
 
                 <a asp-page="/Admin/Restaurant/OperatingHours"
-                   class="sidebar-link">
+                   class="sidebar-link @ActiveClass("/Admin/Restaurant/OperatingHours")">
                     <i class="bi bi-clock"></i>
                     <span>Operating Hours</span>
                 </a>
@@ -74,30 +88,33 @@
                 </div>
 
                 <a asp-page="/Admin/Users/Index"
-                   class="sidebar-link">
+                   class="sidebar-link @ActiveClass("/Admin/Users/Index")">
                     <i class="bi bi-people"></i>
                     <span>User Management</span>
                 </a>
 
-                <!-- Menu Categories -->
                 <a asp-page="/Admin/Menu/Categories/Index"
-                   class="sidebar-link">
+                   class="sidebar-link @ActiveClass("/Admin/Menu/Categories/Index")">
                     <i class="bi bi-folder2-open"></i>
                     <span>Menu Categories</span>
                 </a>
 
-                <!-- Menu Items -->
                 <a asp-page="/Admin/Menu/Items/Index"
-                   class="sidebar-link">
+                   class="sidebar-link @ActiveClass("/Admin/Menu/Items/Index")">
                     <i class="bi bi-egg-fried"></i>
                     <span>Menu Items</span>
                 </a>
 
-                <!-- Promotions & Discounts -->
                 <a asp-page="/Admin/Promotions/Index"
-                   class="sidebar-link">
-                    <i class="bi bi-tags me-2"></i>
-                    Promotions & Discounts
+                   class="sidebar-link @ActiveClass("/Admin/Promotions/Index")">
+                    <i class="bi bi-tags"></i>
+                    <span>Promotions &amp; Discounts</span>
+                </a>
+
+                <a asp-page="/Admin/Announcements/Index"
+                   class="sidebar-link @ActiveClass("/Admin/Announcements/Index")">
+                    <i class="bi bi-megaphone"></i>
+                    <span>Announcements</span>
                 </a>
 
                 <!-- Operations -->
@@ -105,21 +122,25 @@
                     OPERATIONS
                 </div>
 
-                <a asp-page="/Admin/Reservations/Index" class="sidebar-link">
-                    <i class="bi bi-calendar-check me-2"></i>
-                    Reservation Monitoring
+                <a asp-page="/Admin/Reservations/Index"
+                   class="sidebar-link @ActiveClass("/Admin/Reservations/Index")">
+                    <i class="bi bi-calendar-check"></i>
+                    <span>Reservation Monitoring</span>
                 </a>
 
-                <a asp-page="/Admin/Orders/Index" class="sidebar-link">
-                    <i class="bi bi-receipt me-2"></i>
-                    Order Monitoring
+                <a asp-page="/Admin/Orders/Index"
+                   class="sidebar-link @ActiveClass("/Admin/Orders/Index")">
+                    <i class="bi bi-receipt"></i>
+                    <span>Order Monitoring</span>
                 </a>
 
                 <a href="#"
                    class="sidebar-link disabled-link"
-                   aria-disabled="true">
+                   aria-disabled="true"
+                   tabindex="-1">
                     <i class="bi bi-credit-card"></i>
-                    <span>Payments</span>
+                    <span>Payment Monitoring</span>
+                    <span class="ms-auto small">Soon</span>
                 </a>
 
                 <!-- Analytics -->
@@ -127,9 +148,21 @@
                     ANALYTICS
                 </div>
 
-                <a asp-page="/Admin/Reports/Index" class="sidebar-link">
-                    <i class="bi bi-bar-chart-line me-2"></i>
-                    Reports & Analytics
+                <a asp-page="/Admin/Reports/Index"
+                   class="sidebar-link @ActiveClass("/Admin/Reports/Index")">
+                    <i class="bi bi-bar-chart-line"></i>
+                    <span>Reports &amp; Analytics</span>
+                </a>
+
+                <!-- System -->
+                <div class="sidebar-section-title">
+                    SYSTEM
+                </div>
+
+                <a asp-page="/Admin/SystemSettings/Index"
+                   class="sidebar-link @ActiveClass("/Admin/SystemSettings/Index")">
+                    <i class="bi bi-gear"></i>
+                    <span>System Settings</span>
                 </a>
 
             </nav>
@@ -147,13 +180,14 @@
                             type="button"
                             id="sidebarToggle"
                             aria-label="Toggle sidebar"
-                            aria-controls="adminSidebar">
+                            aria-controls="adminSidebar"
+                            aria-expanded="true">
                         <i class="bi bi-list"></i>
                     </button>
 
                     <div>
                         <h6 class="mb-0">
-                            @ViewData["Title"]
+                            @(ViewData["Title"] ?? "Dashboard")
                         </h6>
 
                         <small class="text-muted">
@@ -172,7 +206,7 @@
 
                     <div class="profile-text">
                         <span>
-                            @User.Identity?.Name
+                            @(User.Identity?.Name ?? "Administrator")
                         </span>
 
                         <small>
@@ -182,21 +216,20 @@
 
                     <!-- Logout -->
                     <form method="post"
-                          asp-page="/Account/Logout">
-
+                          asp-page="/Account/Logout"
+                          class="ms-2">
                         <button type="submit"
-                                class="btn btn-sm btn-outline-secondary ms-2">
+                                class="btn btn-sm btn-outline-secondary">
                             <i class="bi bi-box-arrow-right"></i>
-                            Logout
+                            <span>Logout</span>
                         </button>
-
                     </form>
 
                 </div>
             </header>
 
             <!-- Page Content -->
-            <main class="admin-content">
+            <main class="admin-content" id="mainContent">
                 @RenderBody()
             </main>
 

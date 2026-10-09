@@ -33,6 +33,23 @@ body {
 }
 
 
+.sidebar-link.active {
+    background-color: #e8eef5;
+    color: #263645;
+    font-weight: 600;
+}
+
+    .sidebar-link.active i {
+        color: #263645;
+    }
+
+.sidebar-link.disabled-link {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+
 .admin-main {
     width: calc(100% - 255px);
     margin-left: 255px;

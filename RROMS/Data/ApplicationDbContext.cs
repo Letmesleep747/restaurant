@@ -26,6 +26,10 @@ namespace RROMS.Data
 
         public DbSet<Promotion> Promotions { get; set; }
 
+        public DbSet<Announcement> Announcements { get; set; }
+
+        public DbSet<SystemSetting> SystemSettings { get; set; }
+
 
         protected override void OnModelCreating(
             ModelBuilder modelBuilder)
@@ -74,6 +78,11 @@ namespace RROMS.Data
             modelBuilder.Entity<MenuItem>()
                 .Property(m => m.Price)
                 .HasColumnType("decimal(10,2)");
+
+
+            modelBuilder.Entity<Promotion>()
+                .Property(p => p.DiscountValue)
+                .HasPrecision(10, 2);
         }
     }
 }
