@@ -78,10 +78,18 @@ else
     </div>
 
     @section Scripts {
+        <script src="~/js/customer-cart.js"></script>
         <script>
-            // Poll every 8 seconds for a live status update. Wrapped in
-            // try/catch so a transient network blip never surfaces as an
-            // unhandled error in the console.
+            // Wipe localStorage cart after a successful Place Order redirect.
+            @if (TempData["ClearCart"] != null)
+            {
+                <text>
+                localStorage.removeItem("rroms_cart");
+                sessionStorage.removeItem("rroms_cart_backup");
+                if (window.rromsCart) window.rromsCart.clearCart();
+                </text>
+            }
+
             const orderId = @o.Id;
             async function refreshOrderStatus() {
                 try {
@@ -92,8 +100,10 @@ else
                     const data = await res.json();
                     document.getElementById("order-status-badge").textContent = data.status;
                     const payBadge = document.getElementById("payment-status-badge");
-                    payBadge.textContent = data.paymentStatus;
-                    payBadge.className = "badge text-bg-" + (data.paymentStatus === "Paid" ? "success" : "secondary");
+                    if (payBadge) {
+                        payBadge.textContent = data.paymentStatus;
+                        payBadge.className = "badge text-bg-" + (data.paymentStatus === "Paid" ? "success" : "secondary");
+                    }
                 } catch {
                     // Ignore — will retry on the next tick.
                 }

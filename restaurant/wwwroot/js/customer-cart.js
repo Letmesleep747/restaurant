@@ -136,7 +136,30 @@
                     <input type="hidden" name="CartItems[${index}].Quantity" value="${item.qty}" />
                 `;
             });
+            // Cart data is already copied into the form — clear local cart now
+            // so returning to Menu/Checkout after a successful order is empty.
+            // Mark pending so if the server rejects the order we can restore.
+            sessionStorage.setItem("rroms_cart_backup", JSON.stringify(cart));
+            clearCart();
         });
+    }
+
+    // If checkout page reloads with a validation error, restore the cart.
+    const validationSummary = document.querySelector("[asp-validation-summary], .validation-summary-errors, .text-danger");
+    if (document.getElementById("place-order-form") && sessionStorage.getItem("rroms_cart_backup")) {
+        const hasServerError = document.querySelector(".validation-summary-errors li, div.text-danger ul li");
+        if (hasServerError) {
+            try {
+                const backup = JSON.parse(sessionStorage.getItem("rroms_cart_backup"));
+                if (Array.isArray(backup) && backup.length) {
+                    saveCart(backup);
+                    if (cartTableBody) renderCheckoutCart();
+                }
+            } catch { /* ignore */ }
+        } else if (getCart().length === 0) {
+            // Successful redirect path — drop the backup
+            sessionStorage.removeItem("rroms_cart_backup");
+        }
     }
 
     // Expose clearCart globally so the Checkout success handler can wipe it.
