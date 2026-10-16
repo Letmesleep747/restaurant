@@ -12,7 +12,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-page="/Customer/Index">Dine & Dash</a>
+                <a class="navbar-brand" asp-page="/Customer/Menu">Dine & Dash</a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -21,18 +21,18 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Customer/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-page="/Customer/Menu">Menu</a>
                         </li>
-                        @if (User?.Identity?.IsAuthenticated == true && User.IsInRole("Customer"))
+                        @if (User?.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-page="/Customer/Reservations/Index">Reservations</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-page="/Customer/Orders/Index">Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/Index">My activity</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-page="/Customer/Notifications/Index">Notifications</a>
@@ -42,12 +42,9 @@
                     <ul class="navbar-nav">
                         @if (User?.Identity?.IsAuthenticated ?? false)
                         {
-                            @if (User.IsInRole("Customer"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-page="/Profile">My Profile</a>
-                                </li>
-                            }
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/Profile">My Profile</a>
+                            </li>
                             @if (User.IsInRole("Staff"))
                             {
                                 <li class="nav-item">

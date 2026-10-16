@@ -9,7 +9,7 @@ using restaurant.Models;
 
 namespace restaurant.Pages.Customer.Feedback
 {
-    [Authorize(Roles = "Customer")]
+    [Authorize]
     public class CreateModel : PageModel
     {
         private readonly ApplicationDbContext _db;

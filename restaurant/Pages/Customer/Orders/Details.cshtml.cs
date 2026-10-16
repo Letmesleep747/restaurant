@@ -10,7 +10,7 @@ using restaurant.Services;
 
 namespace restaurant.Pages.Customer.Orders
 {
-    [Authorize(Roles = "Customer")]
+    [Authorize]
     public class DetailsModel : PageModel
     {
         private readonly ApplicationDbContext _db;

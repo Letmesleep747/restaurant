@@ -7,7 +7,7 @@ using restaurant.Models;
 
 namespace restaurant.Pages.Customer
 {
-    [Authorize(Roles = "Customer")]
+    [Authorize]
     public class ProfileModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;

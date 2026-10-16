@@ -8,7 +8,7 @@ using restaurant.Models;
 
 namespace restaurant.Pages.Customer.Orders
 {
-    [Authorize(Roles = "Customer")]
+    [Authorize]
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _db;

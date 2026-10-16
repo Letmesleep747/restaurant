@@ -11,7 +11,7 @@ using restaurant.Services;
 
 namespace restaurant.Pages.Customer.Reservations
 {
-    [Authorize(Roles = "Customer")]
+    [Authorize]
     public class EditModel : PageModel
     {
         private readonly ApplicationDbContext _db;

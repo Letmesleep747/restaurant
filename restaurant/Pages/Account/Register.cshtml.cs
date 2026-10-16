@@ -50,12 +50,12 @@ namespace restaurant.Pages.Account
 
         public void OnGet(string? returnUrl = null)
         {
-            ReturnUrl = returnUrl ?? Url.Content("~/Customer/Index");
+            ReturnUrl = returnUrl ?? "/Customer/Menu";
         }
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/Customer/Index");
+            returnUrl ??= "/Customer/Menu";
 
             if (!ModelState.IsValid)
                 return Page();
