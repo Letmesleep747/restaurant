@@ -74,6 +74,7 @@ namespace restaurant.Pages.Account
                 Email = Input.Email,
                 PhoneNumber = Input.PhoneNumber,
                 FullName = Input.FullName,
+                IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
 

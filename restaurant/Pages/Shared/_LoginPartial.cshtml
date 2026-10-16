@@ -1,19 +1,15 @@
 @using Microsoft.AspNetCore.Identity
 @using restaurant.Models
 @inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
-
-@* Partial required by the default Identity UI layout. Shows login/register links for anonymous users
-   and account/manage/logout links for authenticated users. *@
 
 @if (SignInManager?.IsSignedIn(User) ?? false)
 {
 	<ul class="navbar-nav">
 		<li class="nav-item">
-			<a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index">Hello @User.Identity.Name</a>
+			<a class="nav-link text-dark" asp-page="/Profile">Hello @User.Identity?.Name</a>
 		</li>
 		<li class="nav-item">
-			<form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" method="post" id="logoutForm">
+			<form class="form-inline" asp-page="/Account/Logout" method="post">
 				<button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
 			</form>
 		</li>
@@ -23,10 +19,10 @@ else
 {
 	<ul class="navbar-nav">
 		<li class="nav-item">
-			<a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+			<a class="nav-link text-dark" asp-page="/Account/Login">Login</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+			<a class="nav-link text-dark" asp-page="/Account/Register">Register</a>
 		</li>
 	</ul>
 }

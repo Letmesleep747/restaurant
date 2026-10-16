@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - restaurant</title>
+    <title>@ViewData["Title"] - Dine & Dash</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -12,8 +12,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <!--header name -->
-                <a class="navbar-brand" asp-area="" asp-page="/Index">Dine & Dash</a>
+                <a class="navbar-brand" asp-page="/Customer/Index">Dine & Dash</a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -22,33 +21,47 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link text-dark" asp-page="/Customer/Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-page="/Customer/Menu">Menu</a>
                         </li>
+                        @if (User?.Identity?.IsAuthenticated == true && User.IsInRole("Customer"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/Customer/Reservations/Index">Reservations</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/Customer/Orders/Index">Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/Customer/Notifications/Index">Notifications</a>
+                            </li>
+                        }
                     </ul>
                     <ul class="navbar-nav">
                         @if (User?.Identity?.IsAuthenticated ?? false)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Account/Manage/Index">My Account</a>
-                            </li>
-                            @* Show Staff/Admin links only to users in those roles *@
+                            @if (User.IsInRole("Customer"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-page="/Profile">My Profile</a>
+                                </li>
+                            }
                             @if (User.IsInRole("Staff"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-page="/Staff/Index">Staff</a>
+                                    <a class="nav-link text-dark" asp-page="/Staff/Index">Staff</a>
                                 </li>
                             }
                             @if (User.IsInRole("Administrator"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-page="/Admin/Index">Admin</a>
+                                    <a class="nav-link text-dark" asp-page="/Admin/Index">Admin</a>
                                 </li>
                             }
                             <li class="nav-item">
-                                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" method="post" id="logoutForm">
+                                <form class="form-inline" asp-page="/Account/Logout" method="post">
                                     <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
                                 </form>
                             </li>
@@ -56,10 +69,10 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                                <a class="nav-link text-dark" asp-page="/Account/Login">Login</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                                <a class="nav-link text-dark" asp-page="/Account/Register">Register</a>
                             </li>
                         }
                     </ul>
@@ -73,9 +86,11 @@
         </main>
     </div>
 
+    <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2026 - Dine & Dash - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            &copy; 2026 - Dine & Dash - <a asp-page="/Privacy">Privacy</a>
         </div>
     </footer>
 

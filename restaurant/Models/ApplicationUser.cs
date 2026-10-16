@@ -11,6 +11,10 @@ namespace restaurant.Models
 
         [StringLength(250)]
         public string? Address { get; set; }
+
+        // Required by Azure AspNetUsers (Admin schema) — must be sent on INSERT
+        public bool IsActive { get; set; } = true;
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation properties

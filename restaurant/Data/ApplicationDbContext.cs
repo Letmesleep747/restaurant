@@ -12,8 +12,6 @@ namespace restaurant.Data
             : base(options) { }
 
         // --- Customer module tables ---
-        // --- Extra Tables and MenuItems ---
-        public DbSet<Table> Tables { get; set; } = null!;
         public DbSet<Reservation> Reservations { get; set; } = null!;
         public DbSet<Order> Orders { get; set; } = null!;
         public DbSet<OrderItem> OrderItems { get; set; } = null!;
@@ -21,14 +19,24 @@ namespace restaurant.Data
         public DbSet<Feedback> Feedbacks { get; set; } = null!;
         public DbSet<Notification> Notifications { get; set; } = null!;
 
-        // ---  shared tables for Admin module context (if admin module have then delete in customer module context) ---
+        // Shared with Admin Azure schema (mapped below)
         public DbSet<MenuItem> MenuItems { get; set; } = null!;
         public DbSet<DiningTable> DiningTables { get; set; } = null!;
-        // ------------------------------------------------------------
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // add relationships, constraints, indexes here
+
+            // Map to Admin's existing Azure tables — do not create parallel copies
+            builder.Entity<DiningTable>(e =>
+            {
+                e.ToTable("RestaurantTables");
+                e.HasKey(t => t.Id);
+                e.Property(t => t.Id).HasColumnName("RestaurantTableId");
+            });
+
+            builder.Entity<MenuItem>().ToTable("MenuItems");
+
             builder.Entity<Reservation>().Property(r => r.Status)
                 .HasConversion<string>().HasMaxLength(20);
             builder.Entity<Order>().Property(o => o.Status)
@@ -95,17 +103,8 @@ namespace restaurant.Data
                 .HasForeignKey(f => f.ReservationId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            builder.Entity<DiningTable>().HasData(
-                new DiningTable { Id = 1, TableNumber = "T1", Capacity = 2, IsActive = true },
-                new DiningTable { Id = 1, TableNumber = "T2", Capacity = 4, IsActive = true },
-                new DiningTable { Id = 1, TableNumber = "T3", Capacity = 6, IsActive = true }
-                );
-
-            builder.Entity<MenuItem>().HasData(
-                new MenuItem { Id = 1, Name = "Margherita Pizza", Description = "Tomato, mozzarella, basil.", Price = 9.50m, Category = "Main Course", IsAvailable = true },
-                new MenuItem { Id = 2, Name = "Caesar Salad", Description = "Crisp romaine lettuce with Caesar dressing, croutons, and Parmesan cheese.", Price = 6.00m, Category = "Starter", IsAvailable = true },
-                new MenuItem { Id = 3, Name = "Sparkling Water", Description = "Chilled sparkling water with a hint of lemon.", Price = 2.00m, Category = "Beverage", IsAvailable = true }
-                );
+            // Seed data is applied via SQL/customer_tables_and_seed.sql
+            // so we do not conflict with Admin's MenuCategoryId schema.
         }
     }
 }
