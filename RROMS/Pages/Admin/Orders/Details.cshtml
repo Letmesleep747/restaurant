@@ -1,24 +1,258 @@
-﻿
-@page "{id:int}"
+﻿@page "{id:int}"
 @model RROMS.Pages.Admin.Orders.DetailsModel
 
 @{
     ViewData["Title"] = "Order Details";
+
+    var order = Model.Order!;
+
+    string StatusClass(string status) => status switch
+    {
+        "Placed" => "bg-primary",
+        "Preparing" => "bg-warning text-dark",
+        "ReadyToServe" => "bg-info text-dark",
+        "Served" => "bg-success",
+        "Completed" => "bg-success",
+        "Cancelled" => "bg-danger",
+        _ => "bg-secondary"
+    };
+
+    string StatusLabel(string status) => status switch
+    {
+        "ReadyToServe" => "Ready to Serve",
+        _ => status
+    };
+
+    string PaymentClass(string status) => status switch
+    {
+        "Paid" => "bg-success",
+        "Pending" => "bg-warning text-dark",
+        "Refunded" => "bg-info text-dark",
+        "Failed" => "bg-danger",
+        _ => "bg-secondary"
+    };
 }
 
 <div class="container-fluid py-4">
-    <a asp-page="./Index" class="text-decoration-none">
-        <i class="bi bi-arrow-left"></i> Back to Orders
-    </a>
 
-    <div class="card border-0 shadow-sm mt-4">
-        <div class="card-body text-center py-5">
-            <i class="bi bi-receipt display-4 text-muted"></i>
-            <h3 class="mt-3">Order Details</h3>
-            <p class="text-muted">Order reference: @Model.Id</p>
-            <p class="text-muted">
-                Order items and payment details will be loaded after database integration.
-            </p>
+    <div class="mb-4">
+        <a asp-page="./Index" class="text-decoration-none">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Orders
+        </a>
+
+        <div class="d-flex flex-wrap justify-content-between
+            align-items-center gap-3 mt-3">
+            <div>
+                <h2 class="fw-bold mb-1">Order #@order.Id</h2>
+                <p class="text-muted mb-0">
+                    Placed on @order.OrderDate.ToString("dd MMM yyyy, hh:mm tt")
+                </p>
+            </div>
+
+            <span class="badge @StatusClass(order.Status) fs-6">
+                @StatusLabel(order.Status)
+            </span>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Customer and order information -->
+        <div class="col-12 col-lg-5">
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person me-2"></i>
+                        Customer Information
+                    </h5>
+                </div>
+
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-muted">Name</dt>
+                        <dd class="col-sm-8">
+                            @(order.Customer?.FullName ?? "Unknown customer")
+                        </dd>
+
+                        <dt class="col-sm-4 text-muted">Email</dt>
+                        <dd class="col-sm-8">
+                            @(order.Customer?.Email ?? "Not provided")
+                        </dd>
+
+                        <dt class="col-sm-4 text-muted">Customer ID</dt>
+                        <dd class="col-sm-8 text-break">
+                            @order.CustomerId
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Order Information
+                    </h5>
+                </div>
+
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-5 text-muted">Order ID</dt>
+                        <dd class="col-sm-7">#@order.Id</dd>
+
+                        <dt class="col-sm-5 text-muted">Order Date</dt>
+                        <dd class="col-sm-7">
+                            @order.OrderDate.ToString("dd MMM yyyy, hh:mm tt")
+                        </dd>
+
+                        <dt class="col-sm-5 text-muted">Reservation</dt>
+                        <dd class="col-sm-7">
+                            @if (order.ReservationId.HasValue)
+                            {
+                                <a asp-page="/Admin/Reservations/Details"
+                                   asp-route-id="@order.ReservationId.Value">
+                                    Reservation #@order.ReservationId
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">No linked reservation</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-5 text-muted">Notes</dt>
+                        <dd class="col-sm-7">
+                            @(string.IsNullOrWhiteSpace(order.Notes)
+                                ? "None"
+                                : order.Notes)
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Order items -->
+        <div class="col-12 col-lg-7">
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-basket me-2"></i>
+                        Order Items
+                    </h5>
+                </div>
+
+                <div class="card-body p-0">
+                    @if (order.OrderItems.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-3">Menu Item ID</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                        <th class="text-end pe-3">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in order.OrderItems)
+                                    {
+                                        <tr>
+                                            <td class="ps-3">
+                                                #@item.MenuItemId
+                                            </td>
+                                            <td>@item.Quantity</td>
+                                            <td>
+                                                RM @item.UnitPrice.ToString("N2")
+                                            </td>
+                                            <td class="text-end pe-3 fw-semibold">
+                                                RM @item.Subtotal.ToString("N2")
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            No order items recorded.
+                        </div>
+                    }
+
+                    <div class="d-flex justify-content-between
+                        align-items-center border-top p-3">
+                        <span class="fw-semibold">Order Total</span>
+                        <span class="fs-5 fw-bold">
+                            RM @order.TotalAmount.ToString("N2")
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payments -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-credit-card me-2"></i>
+                        Payment Records
+                    </h5>
+                </div>
+
+                <div class="card-body p-0">
+                    @if (order.Payments.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-3">Payment</th>
+                                        <th>Method</th>
+                                        <th>Status</th>
+                                        <th>Transaction Date</th>
+                                        <th class="text-end pe-3">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var payment in order.Payments
+                                        .OrderByDescending(p => p.TransactionDate)
+                                        .ThenByDescending(p => p.Id))
+                                    {
+                                        <tr>
+                                            <td class="ps-3">#@payment.Id</td>
+                                            <td>@payment.Method</td>
+                                            <td>
+                                                <span class="badge @PaymentClass(payment.Status)">
+                                                    @payment.Status
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @(payment.TransactionDate?.ToString("dd MMM yyyy, hh:mm tt")
+                                                    ?? "Not recorded")
+                                            </td>
+                                            <td class="text-end pe-3 fw-semibold">
+                                                RM @payment.Amount.ToString("N2")
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            No payment records found for this order.
+                        </div>
+                    }
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

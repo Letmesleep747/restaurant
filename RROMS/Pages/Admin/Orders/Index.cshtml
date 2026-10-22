@@ -1,31 +1,53 @@
-﻿
-@page
+﻿@page
 @model RROMS.Pages.Admin.Orders.IndexModel
 
 @{
     ViewData["Title"] = "Order Monitoring";
+
+    string StatusClass(string status) => status switch
+    {
+        "Placed" => "bg-primary",
+        "Preparing" => "bg-warning text-dark",
+        "ReadyToServe" => "bg-info text-dark",
+        "Served" => "bg-success",
+        "Completed" => "bg-success",
+        "Cancelled" => "bg-danger",
+        _ => "bg-secondary"
+    };
+
+    string StatusLabel(string status) => status switch
+    {
+        "ReadyToServe" => "Ready to Serve",
+        _ => status
+    };
+
+    string PaymentClass(string? status) => status switch
+    {
+        "Paid" => "bg-success",
+        "Pending" => "bg-warning text-dark",
+        "Refunded" => "bg-info text-dark",
+        "Failed" => "bg-danger",
+        _ => "bg-secondary"
+    };
 }
 
 <div class="container-fluid py-4">
 
-    <div class="mb-4">
-        <h2 class="fw-bold mb-1">Order Monitoring</h2>
-        <p class="text-muted mb-0">
-            Monitor customer orders, order progress, and payment information.
-        </p>
-    </div>
-
-    <div class="alert alert-info d-flex align-items-start gap-2">
-        <i class="bi bi-info-circle fs-5"></i>
+    <div class="d-flex flex-wrap justify-content-between
+        align-items-center gap-3 mb-4">
         <div>
-            <strong>Database integration pending</strong>
-            <div>
-                Order and payment records will appear here once their
-                tables and models are connected.
-            </div>
+            <h2 class="fw-bold mb-1">Order Monitoring</h2>
+            <p class="text-muted mb-0">
+                Review customer orders, order totals and payment status.
+            </p>
         </div>
+
+        <span class="badge bg-primary fs-6">
+            @Model.TotalOrders Total Orders
+        </span>
     </div>
 
+    <!-- Summary cards -->
     <div class="row g-3 mb-4">
 
         <div class="col-12 col-sm-6 col-xl-3">
@@ -41,9 +63,9 @@
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <div class="text-muted small">In Progress</div>
-                    <div class="fs-3 fw-bold">@Model.ActiveOrders</div>
-                    <i class="bi bi-hourglass-split text-warning fs-4"></i>
+                    <div class="text-muted small">Placed Orders</div>
+                    <div class="fs-3 fw-bold">@Model.PlacedOrders</div>
+                    <i class="bi bi-bag-check text-info fs-4"></i>
                 </div>
             </div>
         </div>
@@ -51,25 +73,28 @@
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <div class="text-muted small">Completed</div>
-                    <div class="fs-3 fw-bold">@Model.CompletedOrders</div>
-                    <i class="bi bi-check-circle text-success fs-4"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="text-muted small">Cancelled</div>
+                    <div class="text-muted small">Cancelled Orders</div>
                     <div class="fs-3 fw-bold">@Model.CancelledOrders</div>
                     <i class="bi bi-x-circle text-danger fs-4"></i>
                 </div>
             </div>
         </div>
 
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Total Order Value</div>
+                    <div class="fs-3 fw-bold">
+                        RM @Model.TotalOrderValue.ToString("N2")
+                    </div>
+                    <i class="bi bi-currency-dollar text-success fs-4"></i>
+                </div>
+            </div>
+        </div>
+
     </div>
 
+    <!-- Filters -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
             <form method="get" class="row g-3 align-items-end">
@@ -80,7 +105,7 @@
                     </label>
                     <input asp-for="SearchTerm"
                            class="form-control"
-                           placeholder="Order ID or customer" />
+                           placeholder="Order ID, customer name or email" />
                 </div>
 
                 <div class="col-12 col-md-3">
@@ -94,7 +119,7 @@
 
                 <div class="col-12 col-md-3">
                     <label asp-for="StatusFilter" class="form-label">
-                        Order Status
+                        Status
                     </label>
                     <select asp-for="StatusFilter" class="form-select">
                         <option value="">All statuses</option>
@@ -108,9 +133,12 @@
                 </div>
 
                 <div class="col-12 col-md-2 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary flex-fill">
-                        <i class="bi bi-search me-1"></i> Search
+                    <button type="submit"
+                            class="btn btn-primary flex-fill">
+                        <i class="bi bi-search me-1"></i>
+                        Search
                     </button>
+
                     <a asp-page="./Index"
                        class="btn btn-outline-secondary"
                        title="Clear filters">
@@ -122,19 +150,135 @@
         </div>
     </div>
 
+    <!-- Orders table -->
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white py-3">
+        <div class="card-header bg-white py-3
+            d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Order Records</h5>
+            <span class="text-muted small">
+                @Model.OrderRecords.Count record(s) found
+            </span>
         </div>
 
-        <div class="card-body">
-            <div class="text-center py-5">
-                <i class="bi bi-receipt-cutoff display-4 text-muted"></i>
-                <h5 class="mt-3">No order records to display</h5>
-                <p class="text-muted mb-0">
-                    Order records will appear here after integration.
-                </p>
-            </div>
+        <div class="card-body p-0">
+
+            @if (Model.OrderRecords.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Order</th>
+                                <th>Customer</th>
+                                <th>Order Date</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Order Status</th>
+                                <th>Payment</th>
+                                <th class="text-end pe-3">Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var order in Model.OrderRecords)
+                            {
+                                var latestPayment = order.Payments
+                                    .OrderByDescending(p => p.TransactionDate)
+                                    .ThenByDescending(p => p.Id)
+                                    .FirstOrDefault();
+
+                                <tr>
+                                    <td class="ps-3">
+                                        <span class="fw-semibold">
+                                            #@order.Id
+                                        </span>
+
+                                        @if (order.ReservationId.HasValue)
+                                        {
+                                            <div class="text-muted small">
+                                                Reservation #@order.ReservationId
+                                            </div>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <div class="fw-semibold">
+                                            @(order.Customer?.FullName
+                                                ?? "Unknown customer")
+                                        </div>
+                                        <div class="text-muted small">
+                                            @(order.Customer?.Email
+                                                ?? order.CustomerId)
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        @order.OrderDate.ToString("dd MMM yyyy")
+                                        <div class="text-muted small">
+                                            @order.OrderDate.ToString("hh:mm tt")
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        @order.OrderItems.Sum(i => i.Quantity)
+                                        item(s)
+                                    </td>
+
+                                    <td class="fw-semibold">
+                                        RM @order.TotalAmount.ToString("N2")
+                                    </td>
+
+                                    <td>
+                                        <span class="badge @StatusClass(order.Status)">
+                                            @StatusLabel(order.Status)
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @if (latestPayment != null)
+                                        {
+                                            <span class="badge @PaymentClass(latestPayment.Status)">
+                                                @latestPayment.Status
+                                            </span>
+                                            <div class="text-muted small mt-1">
+                                                @latestPayment.Method
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                No payment
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td class="text-end pe-3">
+                                        <a asp-page="./Details"
+                                           asp-route-id="@order.Id"
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye me-1"></i>
+                                            Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 px-3">
+                    <i class="bi bi-receipt display-4 text-muted"></i>
+                    <h5 class="mt-3">No orders found</h5>
+                    <p class="text-muted mb-0">
+                        Try changing your search criteria or clearing the filters.
+                    </p>
+                </div>
+            }
+
         </div>
     </div>
 

@@ -1,37 +1,50 @@
-﻿
-@page
+﻿@page
 @model RROMS.Pages.Admin.Reservations.IndexModel
 
 @{
     ViewData["Title"] = "Reservation Monitoring";
+
+    string StatusClass(string status) => status switch
+    {
+        "Pending" => "bg-warning text-dark",
+        "Confirmed" => "bg-success",
+        "Cancelled" => "bg-danger",
+        "NoShow" => "bg-secondary",
+        _ => "bg-light text-dark"
+    };
+
+    string StatusLabel(string status) => status switch
+    {
+        "NoShow" => "No Show",
+        _ => status
+    };
 }
 
 <div class="container-fluid py-4">
 
-    <div class="mb-4">
-        <h2 class="fw-bold mb-1">Reservation Monitoring</h2>
-        <p class="text-muted mb-0">
-            Monitor customer reservations and booking activity.
-        </p>
-    </div>
-
-    <div class="alert alert-info d-flex align-items-start gap-2">
-        <i class="bi bi-info-circle fs-5"></i>
+    <div class="d-flex flex-wrap justify-content-between
+                align-items-center gap-3 mb-4">
         <div>
-            <strong>Database integration pending</strong>
-            <div>
-                This page is ready for integration. Reservation records
-                will appear after the customer-side models and database
-                tables are connected.
-            </div>
+            <h2 class="fw-bold mb-1">Reservation Monitoring</h2>
+            <p class="text-muted mb-0">
+                Monitor customer bookings and reservation activity.
+            </p>
         </div>
+
+        <span class="badge bg-primary fs-6">
+            @Model.TotalReservations Total Reservations
+        </span>
     </div>
 
+    <!-- Summary cards -->
     <div class="row g-3 mb-4">
+
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <div class="text-muted small">Total Reservations</div>
+                    <div class="text-muted small">
+                        Total Reservations
+                    </div>
                     <div class="fs-3 fw-bold">
                         @Model.TotalReservations
                     </div>
@@ -75,8 +88,10 @@
                 </div>
             </div>
         </div>
+
     </div>
 
+    <!-- Search and filters -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
             <form method="get" class="row g-3 align-items-end">
@@ -87,7 +102,7 @@
                     </label>
                     <input asp-for="SearchTerm"
                            class="form-control"
-                           placeholder="Customer name or reservation ID" />
+                           placeholder="Reservation ID, customer name or email" />
                 </div>
 
                 <div class="col-12 col-md-3">
@@ -113,9 +128,12 @@
                 </div>
 
                 <div class="col-12 col-md-2 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary flex-fill">
-                        <i class="bi bi-search me-1"></i> Search
+                    <button type="submit"
+                            class="btn btn-primary flex-fill">
+                        <i class="bi bi-search me-1"></i>
+                        Search
                     </button>
+
                     <a asp-page="./Index"
                        class="btn btn-outline-secondary"
                        title="Clear filters">
@@ -127,19 +145,122 @@
         </div>
     </div>
 
+    <!-- Reservation records -->
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white py-3">
+
+        <div class="card-header bg-white py-3
+                    d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Reservation Records</h5>
+            <span class="text-muted small">
+                @Model.ReservationRecords.Count record(s) found
+            </span>
         </div>
 
-        <div class="card-body">
-            <div class="text-center py-5">
-                <i class="bi bi-calendar2-week display-4 text-muted"></i>
-                <h5 class="mt-3">No reservation records to display</h5>
-                <p class="text-muted mb-0">
-                    Reservation data will be displayed here after integration.
-                </p>
-            </div>
+        <div class="card-body p-0">
+
+            @if (Model.ReservationRecords.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Reservation</th>
+                                <th>Customer</th>
+                                <th>Date &amp; Time</th>
+                                <th>Guests</th>
+                                <th>Table</th>
+                                <th>Status</th>
+                                <th class="text-end pe-3">Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var reservation in Model.ReservationRecords)
+                            {
+                                <tr>
+                                    <td class="ps-3">
+                                        <span class="fw-semibold">
+                                            #@reservation.Id
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <div class="fw-semibold">
+                                            @(reservation.Customer?.FullName
+                                                ?? "Unknown customer")
+                                        </div>
+                                        <div class="text-muted small">
+                                            @(reservation.Customer?.Email
+                                                ?? reservation.CustomerId)
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div>
+                                            @reservation.ReservationDate.ToString("dd MMM yyyy")
+                                        </div>
+                                        <div class="text-muted small">
+                                            @reservation.StartTime.ToString(@"hh\:mm")
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <i class="bi bi-people me-1 text-muted"></i>
+                                        @reservation.PartySize
+                                    </td>
+
+                                    <td>
+                                        @if (reservation.Table != null)
+                                        {
+                                            <div class="fw-semibold">
+                                                @reservation.Table.TableNumber
+                                            </div>
+                                            <div class="text-muted small">
+                                                @(reservation.Table.DiningArea?.Name
+                                                    ?? "Dining area unavailable")
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                Not assigned
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <span class="badge @StatusClass(reservation.Status)">
+                                            @StatusLabel(reservation.Status)
+                                        </span>
+                                    </td>
+
+                                    <td class="text-end pe-3">
+                                        <a asp-page="./Details"
+                                           asp-route-id="@reservation.Id"
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye me-1"></i>
+                                            Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 px-3">
+                    <i class="bi bi-calendar2-week display-4 text-muted"></i>
+                    <h5 class="mt-3">No reservations found</h5>
+                    <p class="text-muted mb-0">
+                        Try changing your search criteria or clearing the filters.
+                    </p>
+                </div>
+            }
+
         </div>
     </div>
 
