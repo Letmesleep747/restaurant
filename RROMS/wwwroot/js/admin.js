@@ -1,5 +1,4 @@
-﻿
-(function () {
+﻿(function () {
     function initializeAdminLayout() {
         // Rebind the sidebar toggle after each Turbo navigation.
         const toggleButton = document.getElementById("sidebarToggle");

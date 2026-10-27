@@ -3,116 +3,122 @@
 
 @{
     ViewData["Title"] = "Dashboard";
+    Layout = "_AdminLayout";
 }
 
 <div class="page-heading">
     <div>
         <h2>Admin Dashboard</h2>
-        <p>
-            Overview of restaurant operations and management.
-        </p>
+        <p>Live overview of restaurant operations and management.</p>
     </div>
 </div>
 
-
+<!-- Live statistics -->
 <div class="row g-4">
 
     <div class="col-xl-3 col-md-6">
         <div class="dashboard-card">
-
             <div class="dashboard-card-icon">
                 <i class="bi bi-layout-text-window"></i>
             </div>
-
             <div>
-                <span class="dashboard-label">
-                    Total Tables
-                </span>
-
-                <h3>@Model.Dashboard.TotalTables</h3>
+                <span class="dashboard-label">Active Tables</span>
+                <h3>@Model.ActiveTables</h3>
+                <small class="text-muted">
+                    Out of @Model.TotalTables total tables
+                </small>
             </div>
-
         </div>
     </div>
 
-
     <div class="col-xl-3 col-md-6">
         <div class="dashboard-card">
-
             <div class="dashboard-card-icon">
                 <i class="bi bi-calendar-check"></i>
             </div>
-
             <div>
-                <span class="dashboard-label">
-                    Today's Reservations
-                </span>
-
-                <h3>@Model.Dashboard.TodayReservations</h3>
+                <span class="dashboard-label">Today's Reservations</span>
+                <h3>@Model.TodayReservations</h3>
+                <small class="text-muted">
+                    @Model.ConfirmedReservations confirmed
+                </small>
             </div>
-
         </div>
     </div>
 
-
     <div class="col-xl-3 col-md-6">
         <div class="dashboard-card">
-
             <div class="dashboard-card-icon">
                 <i class="bi bi-receipt"></i>
             </div>
-
             <div>
-                <span class="dashboard-label">
-                    Today's Orders
-                </span>
-
-                <h3>@Model.Dashboard.TodayOrders</h3>
+                <span class="dashboard-label">Today's Orders</span>
+                <h3>@Model.TodayOrders</h3>
+                <small class="text-muted">Based on order date</small>
             </div>
-
         </div>
     </div>
 
-
     <div class="col-xl-3 col-md-6">
         <div class="dashboard-card">
-
             <div class="dashboard-card-icon">
                 <i class="bi bi-cash-stack"></i>
             </div>
-
             <div>
-                <span class="dashboard-label">
-                    Today's Sales
-                </span>
-
-                <h3>
-                    RM @Model.Dashboard.TodaySales.ToString("N2")
-                </h3>
+                <span class="dashboard-label">Today's Paid Sales</span>
+                <h3>RM @Model.TodaySales.ToString("N2")</h3>
+                <small class="text-muted">
+                    Successful recorded payments
+                </small>
             </div>
-
         </div>
     </div>
 
 </div>
 
-
+<!-- Operational overview -->
 <div class="row g-4 mt-1">
 
-    <div class="col-lg-8">
-
-        <div class="content-card">
-
+    <div class="col-lg-4">
+        <div class="content-card h-100">
             <div class="content-card-header">
-                <h5>Restaurant Management</h5>
+                <h5>Reservation Overview</h5>
+                <a asp-page="/Admin/Reservations/Index"
+                   class="small text-decoration-none">View all</a>
+            </div>
 
-                <span class="badge text-bg-light">
-                    Sprint 1
+            <div class="d-flex justify-content-between py-3 border-bottom">
+                <span>Pending</span>
+                <span class="badge bg-warning text-dark">
+                    @Model.PendingReservations
                 </span>
             </div>
 
+            <div class="d-flex justify-content-between py-3 border-bottom">
+                <span>Confirmed</span>
+                <span class="badge bg-success">
+                    @Model.ConfirmedReservations
+                </span>
+            </div>
+
+            <div class="d-flex justify-content-between py-3">
+                <span>Cancelled</span>
+                <span class="badge bg-secondary">
+                    @Model.CancelledReservations
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="content-card h-100">
+            <div class="content-card-header">
+                <h5>Restaurant Management</h5>
+                <span class="badge text-bg-light">Quick Actions</span>
+            </div>
+
             <p class="text-muted">
-                Configure dining areas, restaurant tables and operating hours.
+                Manage the restaurant's facilities and operating schedule.
             </p>
 
             <div class="row g-3 mt-2">
@@ -120,84 +126,149 @@
                 <div class="col-md-4">
                     <a asp-page="/Admin/Restaurant/DiningAreas"
                        class="quick-action">
-
                         <i class="bi bi-building"></i>
-
                         <div>
                             <strong>Dining Areas</strong>
                             <span>Manage restaurant sections</span>
                         </div>
-
                     </a>
                 </div>
-
 
                 <div class="col-md-4">
                     <a asp-page="/Admin/Restaurant/Tables"
                        class="quick-action">
-
                         <i class="bi bi-layout-text-window"></i>
-
                         <div>
                             <strong>Tables</strong>
                             <span>Manage table information</span>
                         </div>
-
                     </a>
                 </div>
-
 
                 <div class="col-md-4">
                     <a asp-page="/Admin/Restaurant/OperatingHours"
                        class="quick-action">
-
                         <i class="bi bi-clock"></i>
-
                         <div>
                             <strong>Operating Hours</strong>
                             <span>Manage opening hours</span>
                         </div>
-
                     </a>
                 </div>
 
             </div>
-
         </div>
-
     </div>
 
+</div>
 
-    <div class="col-lg-4">
-
-        <div class="content-card">
-
-            <div class="content-card-header">
-                <h5>Development Status</h5>
-            </div>
-
-            <div class="development-item">
-                <i class="bi bi-check-circle-fill"></i>
-                Admin layout
-            </div>
-
-            <div class="development-item">
-                <i class="bi bi-check-circle-fill"></i>
-                Dashboard
-            </div>
-
-            <div class="development-item">
-                <i class="bi bi-check-circle-fill"></i>
-                Restaurant pages
-            </div>
-
-            <div class="development-item pending">
-                <i class="bi bi-circle"></i>
-                Database integration
-            </div>
-
-        </div>
-
+<!-- Recent reservations -->
+<div class="content-card mt-4">
+    <div class="content-card-header">
+        <h5>Recent Reservations</h5>
+        <a asp-page="/Admin/Reservations/Index"
+           class="small text-decoration-none">View all</a>
     </div>
 
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Reservation</th>
+                    <th>Customer</th>
+                    <th>Date & Time</th>
+                    <th>Guests</th>
+                    <th>Table</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.RecentReservations.Count == 0)
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            No reservations have been recorded yet.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var reservation in Model.RecentReservations)
+                    {
+                        <tr>
+                            <td>#@reservation.Id</td>
+                            <td>@reservation.CustomerName</td>
+                            <td>
+                                <div>@reservation.ReservationDate.ToString("dd MMM yyyy")</div>
+                                <small class="text-muted">
+                                    @reservation.StartTime.ToString(@"hh\:mm")
+                                </small>
+                            </td>
+                            <td>@reservation.PartySize</td>
+                            <td>@reservation.TableNumber</td>
+                            <td>
+                                <span class="badge @(reservation.Status == "Confirmed" ? "bg-success" : reservation.Status == "Pending" ? "bg-warning text-dark" : reservation.Status == "Cancelled" ? "bg-secondary" : "bg-info text-dark")">
+                                    @reservation.Status
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Recent orders -->
+<div class="content-card mt-4">
+    <div class="content-card-header">
+        <h5>Recent Orders</h5>
+        <a asp-page="/Admin/Orders/Index"
+           class="small text-decoration-none">View all</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Order</th>
+                    <th>Customer</th>
+                    <th>Order Date</th>
+                    <th>Items</th>
+                    <th>Amount</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.RecentOrders.Count == 0)
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            No orders have been recorded yet.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var order in Model.RecentOrders)
+                    {
+                        <tr>
+                            <td>#@order.Id</td>
+                            <td>@order.CustomerName</td>
+                            <td>@order.OrderDate.ToString("dd MMM yyyy, HH:mm")</td>
+                            <td>@order.ItemCount</td>
+                            <td>RM @order.TotalAmount.ToString("N2")</td>
+                            <td>
+                                <span class="badge @(order.PaymentStatus == "Paid" ? "bg-success" : order.PaymentStatus == "Failed" ? "bg-danger" : "bg-secondary")">
+                                    @order.PaymentStatus
+                                </span>
+                            </td>
+                            <td>@order.Status</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
