@@ -1,75 +1,120 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Dine & Dash</title>
+    <meta name="theme-color" content="#0f766e" />
+    <title>@ViewData["Title"] - Dine &amp; Dash</title>
+
     <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+          asp-append-version="true" />
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <header class="site-header">
+        <nav class="navbar navbar-expand-lg">
             <div class="container">
-                <a class="navbar-brand" asp-page="/Customer/Menu">Dine & Dash</a>
+                <a class="navbar-brand" asp-page="/Customer/Index"
+                   aria-label="Dine and Dash home">
+                    <span class="brand-mark" aria-hidden="true">D</span>
+                    <span>Dine &amp; Dash</span>
+                </a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#mainNavigation"
+                        aria-controls="mainNavigation"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <div class="collapse navbar-collapse" id="mainNavigation">
+                    <ul class="navbar-nav me-auto ms-lg-4">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Customer/Menu">Menu</a>
+                            <a class="nav-link" asp-page="/Customer/Menu">
+                                Menu
+                            </a>
                         </li>
+
                         @if (User?.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Customer/Reservations/Index">Reservations</a>
+                                <a class="nav-link"
+                                   asp-page="/Customer/Reservations/Index">
+                                    Reservations
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Customer/Orders/Index">Orders</a>
+                                <a class="nav-link"
+                                   asp-page="/Customer/Orders/Index">
+                                    Orders
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Index">My activity</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Customer/Notifications/Index">Notifications</a>
+                                <a class="nav-link"
+                                   asp-page="/Customer/Notifications/Index">
+                                    Notifications
+                                </a>
                             </li>
                         }
                     </ul>
-                    <ul class="navbar-nav">
-                        @if (User?.Identity?.IsAuthenticated ?? false)
+
+                    <ul class="navbar-nav align-items-lg-center">
+                        @if (User?.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Profile">My Profile</a>
+                                <a class="nav-link" asp-page="/Profile">
+                                    My Profile
+                                </a>
                             </li>
+
                             @if (User.IsInRole("Staff"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-page="/Staff/Index">Staff</a>
+                                    <a class="nav-link" asp-page="/Staff/Index">
+                                        Staff
+                                    </a>
                                 </li>
                             }
+
                             @if (User.IsInRole("Administrator"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-page="/Admin/Index">Admin</a>
+                                    <a class="nav-link" asp-page="/Admin/Index">
+                                        Admin
+                                    </a>
                                 </li>
                             }
+
                             <li class="nav-item">
-                                <form class="form-inline" asp-page="/Account/Logout" method="post">
-                                    <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+                                <form asp-page="/Account/Logout" method="post"
+                                      class="d-inline">
+                                    <button type="submit"
+                                            class="btn btn-primary btn-sm ms-lg-2">
+                                        Sign out
+                                    </button>
                                 </form>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Account/Login">Login</a>
+                                <a class="nav-link" asp-page="/Account/Login">
+                                    Sign in
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Account/Register">Register</a>
+                                <a class="btn btn-primary btn-sm ms-lg-2"
+                                   asp-page="/Account/Register">
+                                    Create account
+                                </a>
                             </li>
                         }
                     </ul>
@@ -77,17 +122,23 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <main role="main" class="container py-4">
+        @RenderBody()
+    </main>
+
+    <div id="toast-container"
+         class="toast-container position-fixed bottom-0 end-0 p-3">
     </div>
 
-    <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Dine & Dash - <a asp-page="/Privacy">Privacy</a>
+    <footer class="site-footer mt-auto">
+        <div class="container d-flex flex-column flex-sm-row
+            justify-content-between align-items-sm-center gap-2">
+            <p>
+                &copy; @DateTime.Now.Year Dine &amp; Dash.
+                Crafted for good food and great moments.
+            </p>
+            <a asp-page="/Privacy">Privacy policy</a>
         </div>
     </footer>
 

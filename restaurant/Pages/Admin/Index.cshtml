@@ -1,43 +1,167 @@
+
 @page
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Roles = "Administrator")]
 @model dynamic
 @{
-	// Only users in the Administrator role should access this page.
-	ViewData["Title"] = "Admin Dashboard";
+    ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="container mt-4">
-	<h1>Administrator Interface (Placeholder)</h1>
-	<p class="lead">This area will contain admin features: manage users, tables, menu items, reports and system settings.</p>
+<div class="page-heading d-flex flex-column flex-md-row
+            justify-content-between align-items-md-center gap-3">
+    <div>
+        <span class="eyebrow">MANAGEMENT CENTRE</span>
+        <h1 class="mt-2">Admin dashboard</h1>
+        <p class="mb-0">
+            Manage your restaurant operations from one place.
+        </p>
+    </div>
 
-	<div class="row">
-		<div class="col-md-4">
-			<div class="card mb-3">
-				<div class="card-body">
-					<h5 class="card-title">User Management</h5>
-					<p class="card-text">Create and assign roles to users.</p>
-					<a class="btn btn-warning disabled">Open</a>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-4">
-			<div class="card mb-3">
-				<div class="card-body">
-					<h5 class="card-title">Menu & Tables</h5>
-					<p class="card-text">Manage menu items, categories, and table layout.</p>
-					<a class="btn btn-warning disabled">Open</a>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-4">
-			<div class="card mb-3">
-				<div class="card-body">
-					<h5 class="card-title">Reports</h5>
-					<p class="card-text">Generate reservation and sales reports.</p>
-					<a class="btn btn-warning disabled">Open</a>
-				</div>
-			</div>
-		</div>
-	</div>
+    <span class="badge text-bg-success align-self-start align-self-md-center">
+        ● Administrator access
+    </span>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-sm-6 col-xl-4">
+        <div class="card card-hover stat-card h-100">
+            <div class="stat-icon">👥</div>
+            <h5>User management</h5>
+            <p class="stat-label">
+                Review user accounts and role assignments.
+            </p>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-4">
+        <div class="card card-hover stat-card h-100">
+            <div class="stat-icon">🍽️</div>
+            <h5>Menu management</h5>
+            <p class="stat-label">
+                Maintain menu items, descriptions, and prices.
+            </p>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-4">
+        <div class="card card-hover stat-card h-100">
+            <div class="stat-icon">📊</div>
+            <h5>Operations overview</h5>
+            <p class="stat-label">
+                Access the reservation and order workflows.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card h-100">
+            <div class="card-header">
+                Management shortcuts
+            </div>
+
+            <div class="list-group list-group-flush">
+                <div class="list-group-item d-flex
+                            justify-content-between align-items-center gap-3">
+                    <div>
+                        <h6 class="mb-1">Customer reservations</h6>
+                        <small class="text-muted">
+                            Review reservation records.
+                        </small>
+                    </div>
+                    <a class="btn btn-outline-primary btn-sm"
+                       asp-page="/Customer/Reservations/Index">
+                        Open
+                    </a>
+                </div>
+
+                <div class="list-group-item d-flex
+                            justify-content-between align-items-center gap-3">
+                    <div>
+                        <h6 class="mb-1">Restaurant menu</h6>
+                        <small class="text-muted">
+                            Open the current menu interface.
+                        </small>
+                    </div>
+                    <a class="btn btn-outline-primary btn-sm"
+                       asp-page="/Customer/Menu">
+                        Open
+                    </a>
+                </div>
+
+                <div class="list-group-item d-flex
+                            justify-content-between align-items-center gap-3">
+                    <div>
+                        <h6 class="mb-1">Order management</h6>
+                        <small class="text-muted">
+                            Open the order workflow.
+                        </small>
+                    </div>
+                    <a class="btn btn-outline-primary btn-sm"
+                       asp-page="/Customer/Orders/Index">
+                        Open
+                    </a>
+                </div>
+
+                <div class="list-group-item d-flex
+                            justify-content-between align-items-center gap-3">
+                    <div>
+                        <h6 class="mb-1">Staff interface</h6>
+                        <small class="text-muted">
+                            Access the staff workspace.
+                        </small>
+                    </div>
+                    <a class="btn btn-outline-primary btn-sm"
+                       asp-page="/Staff/Index">
+                        Open
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card h-100">
+            <div class="card-header">
+                System overview
+            </div>
+
+            <div class="card-body">
+                <div class="d-flex align-items-start gap-3 mb-4">
+                    <div class="feature-icon flex-shrink-0">🔐</div>
+                    <div>
+                        <h6>Role-based access</h6>
+                        <p class="small mb-0">
+                            The administrator dashboard is restricted
+                            to authenticated users in the Administrator role.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-start gap-3 mb-4">
+                    <div class="feature-icon flex-shrink-0">📋</div>
+                    <div>
+                        <h6>Centralised workflows</h6>
+                        <p class="small mb-0">
+                            Access existing reservation, menu, and
+                            order pages using the shortcuts.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-start gap-3">
+                    <div class="feature-icon flex-shrink-0">⚙️</div>
+                    <div>
+                        <h6>Room for expansion</h6>
+                        <p class="small mb-0">
+                            Add database-backed sales reports,
+                            menu CRUD, and user management as
+                            those features are implemented.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

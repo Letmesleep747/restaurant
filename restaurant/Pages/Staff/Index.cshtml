@@ -1,34 +1,215 @@
 @page
-@using Microsoft.AspNetCore.Authorization
-@attribute [Authorize(Roles = "Staff")]
 @model dynamic
 @{
-	// Only users in the Staff role should access this page.
-	ViewData["Title"] = "Staff Dashboard";
+    ViewData["Title"] = "Welcome";
+    var status = TempData["StatusMessage"] as string;
 }
 
-<div class="container mt-4">
-	<h1>Staff Interface (Placeholder)</h1>
-	<p class="lead">This area will contain restaurant staff features: view reservations, manage orders, update statuses.</p>
+@if (!string.IsNullOrEmpty(status))
+{
+    <div class="container pt-3">
+        <div class="alert alert-success alert-dismissible fade show mb-0" data-autodismiss role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@status
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
 
-	<div class="row">
-		<div class="col-md-6">
-			<div class="card mb-3">
-				<div class="card-body">
-					<h5 class="card-title">Reservations</h5>
-					<p class="card-text">View and manage daily reservations.</p>
-					<a class="btn btn-secondary disabled">Open</a>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-6">
-			<div class="card mb-3">
-				<div class="card-body">
-					<h5 class="card-title">Orders</h5>
-					<p class="card-text">Receive and update customer orders.</p>
-					<a class="btn btn-secondary disabled">Open</a>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+<!-- Hero -->
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <span class="hero-badge mb-4"><i class="bi bi-stars text-warning"></i> Fresh ingredients &middot; Cooked to order</span>
+                <h1 class="mb-3">Good food, <span>great moments</span>, served fast.</h1>
+                <p class="lead mb-4">Reserve a table in seconds, order from our digital menu and follow your order live from the kitchen to your table.</p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a class="btn btn-primary btn-lg" asp-page="/Customer/Reservations/Create"><i class="bi bi-calendar-check me-2"></i>Book a Table</a>
+                    <a class="btn btn-light-glass btn-lg" asp-page="/Customer/Menu"><i class="bi bi-journal-richtext me-2"></i>Browse Menu</a>
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="hero-visual">
+                    <div class="hero-plate">🍝</div>
+                    <div class="hero-chip one"><span class="ico"><i class="bi bi-lightning-charge-fill"></i></span> Ready in ~15 min</div>
+                    <div class="hero-chip two"><span class="ico"><i class="bi bi-geo-alt-fill"></i></span> Live order tracking</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats strip -->
+<section class="stats-strip">
+    <div class="container">
+        <div class="dd-panel" data-reveal>
+            <div><div class="stat-num">11&ndash;22</div><div class="stat-label">Open every day</div></div>
+            <div><div class="stat-num">40+</div><div class="stat-label">Dishes on the menu</div></div>
+            <div><div class="stat-num">4.9&#9733;</div><div class="stat-label">Average guest rating</div></div>
+            <div><div class="stat-num">Live</div><div class="stat-label">Order tracking</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="section">
+    <div class="container">
+        <div class="text-center mb-5" data-reveal>
+            <span class="eyebrow">Why Dine &amp; Dash</span>
+            <h2 class="section-title">Everything you need for a perfect meal</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" data-reveal data-delay="1">
+                <div class="card feature-card">
+                    <div class="feature-icon"><i class="bi bi-calendar2-check"></i></div>
+                    <h4>Easy Reservations</h4>
+                    <p class="text-muted mb-0">Create, modify and cancel bookings with real-time availability checks &ndash; no phone calls needed.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-reveal data-delay="2">
+                <div class="card feature-card">
+                    <div class="feature-icon gold"><i class="bi bi-journal-text"></i></div>
+                    <h4>Digital Menu</h4>
+                    <p class="text-muted mb-0">Browse every dish with photos, prices and descriptions, filtered by category.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-reveal data-delay="3">
+                <div class="card feature-card">
+                    <div class="feature-icon sage"><i class="bi bi-bag-check"></i></div>
+                    <h4>Fast Orders</h4>
+                    <p class="text-muted mb-0">Order for dine-in or takeaway and watch the status update live as the kitchen cooks.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Popular dishes -->
+<section class="section pt-0">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 gap-3" data-reveal>
+            <div>
+                <span class="eyebrow">Guest favourites</span>
+                <h2 class="section-title mb-0">Popular Dishes</h2>
+            </div>
+            <a class="btn btn-outline-primary" asp-page="/Customer/Menu">See full menu <i class="bi bi-arrow-right ms-1"></i></a>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" data-reveal data-delay="1">
+                <div class="card dish-card">
+                    <div class="dish-media"><span class="dish-tag">Bestseller</span><img src="~/images/sample-pizza.jpg" alt="Margherita Pizza" onerror="this.remove()" />🍕</div>
+                    <div class="dish-body">
+                        <h5>Margherita Pizza</h5>
+                        <p class="dish-desc">Tomato, mozzarella and fresh basil &ndash; simple and delicious.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="dish-price">$8.99</span>
+                            <a class="btn btn-sm btn-primary" asp-page="/Customer/Menu">Order</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-reveal data-delay="2">
+                <div class="card dish-card">
+                    <div class="dish-media v2"><span class="dish-tag">Chef's pick</span><img src="~/images/sample-burger.jpg" alt="Classic Burger" onerror="this.remove()" />🍔</div>
+                    <div class="dish-body">
+                        <h5>Classic Burger</h5>
+                        <p class="dish-desc">Beef patty, lettuce, tomato and our signature house sauce.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="dish-price">$7.50</span>
+                            <a class="btn btn-sm btn-primary" asp-page="/Customer/Menu">Order</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-reveal data-delay="3">
+                <div class="card dish-card">
+                    <div class="dish-media v3"><span class="dish-tag">Fresh &amp; light</span><img src="~/images/sample-salad.jpg" alt="Caesar Salad" onerror="this.remove()" />🥗</div>
+                    <div class="dish-body">
+                        <h5>Caesar Salad</h5>
+                        <p class="dish-desc">Crisp romaine, parmesan, croutons and creamy dressing.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="dish-price">$6.25</span>
+                            <a class="btn btn-sm btn-primary" asp-page="/Customer/Menu">Order</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How it works -->
+<section class="section" style="background: var(--dd-sand)">
+    <div class="container">
+        <div class="text-center mb-5" data-reveal>
+            <span class="eyebrow">How it works</span>
+            <h2 class="section-title">From craving to table in 3 steps</h2>
+        </div>
+        <div class="row g-4 text-center">
+            <div class="col-md-4" data-reveal data-delay="1">
+                <div class="step-num mx-auto">1</div>
+                <h5>Pick your dishes</h5>
+                <p class="text-muted">Browse the menu and add your favourites to the cart.</p>
+            </div>
+            <div class="col-md-4" data-reveal data-delay="2">
+                <div class="step-num mx-auto">2</div>
+                <h5>Place your order</h5>
+                <p class="text-muted">Choose dine-in or takeaway and add any special instructions.</p>
+            </div>
+            <div class="col-md-4" data-reveal data-delay="3">
+                <div class="step-num mx-auto">3</div>
+                <h5>Track &amp; enjoy</h5>
+                <p class="text-muted">Get live notifications as your food is prepared and served.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section">
+    <div class="container">
+        <div class="text-center mb-5" data-reveal>
+            <span class="eyebrow">Kind words</span>
+            <h2 class="section-title">Loved by our guests</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" data-reveal data-delay="1">
+                <div class="card testimonial">
+                    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p>"Booking a table took less than a minute and the food arrived piping hot. Absolutely brilliant."</p>
+                    <div class="who"><div class="av">A</div><div><strong>Aisha R.</strong><div class="small text-muted">Dine-in guest</div></div></div>
+                </div>
+            </div>
+            <div class="col-md-4" data-reveal data-delay="2">
+                <div class="card testimonial">
+                    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p>"Love being able to track my order live. The burger is the best I've had in town."</p>
+                    <div class="who"><div class="av">D</div><div><strong>Daniel T.</strong><div class="small text-muted">Takeaway regular</div></div></div>
+                </div>
+            </div>
+            <div class="col-md-4" data-reveal data-delay="3">
+                <div class="card testimonial">
+                    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p>"Clean menu, friendly staff and a super easy reservation system. We'll be back."</p>
+                    <div class="who"><div class="av">M</div><div><strong>Mei L.</strong><div class="small text-muted">Birthday dinner</div></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Visit us -->
+<section class="pb-5">
+    <div class="container">
+        <div class="cta-band" data-reveal>
+            <h2 class="mb-2">Visit Dine &amp; Dash</h2>
+            <p class="mb-4">We'd love to see you. Pull up a chair &ndash; your table is waiting.</p>
+            <div class="row g-4 justify-content-center text-start mb-4">
+                <div class="col-md-4"><div class="info-tile"><div class="ico"><i class="bi bi-geo-alt-fill"></i></div><div><strong>Address</strong><div class="small opacity-75">123 Flavor Street, Foodtown</div></div></div></div>
+                <div class="col-md-4"><div class="info-tile"><div class="ico"><i class="bi bi-clock-fill"></i></div><div><strong>Opening hours</strong><div class="small opacity-75">Daily 11:00 AM &ndash; 10:00 PM</div></div></div></div>
+                <div class="col-md-4"><div class="info-tile"><div class="ico"><i class="bi bi-telephone-fill"></i></div><div><strong>Call us</strong><div class="small opacity-75">(555) 012-3456</div></div></div></div>
+            </div>
+            <a class="btn btn-gold btn-lg" asp-page="/Customer/Reservations/Create">Reserve your table</a>
+        </div>
+    </div>
+</section>
