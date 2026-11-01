@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using RROMS.Models;
@@ -16,8 +17,10 @@ namespace RROMS.Pages.Admin.Users
             _userManager = userManager;
         }
 
-        public List<UserListItemViewModel> Users { get; set; }
-            = new();
+        [BindProperty(SupportsGet = true)]
+        public string RoleFilter { get; set; } = "All";
+
+        public List<UserListItemViewModel> Users { get; set; } = new();
 
         public async Task OnGetAsync()
         {
@@ -27,26 +30,32 @@ namespace RROMS.Pages.Admin.Users
 
             foreach (var user in users)
             {
-                var roles =
-                    await _userManager.GetRolesAsync(user);
+                var roles = await _userManager.GetRolesAsync(user);
 
-                Users.Add(
-                    new UserListItemViewModel
-                    {
-                        Id = user.Id,
+                // Apply the selected role filter.
+                if (!string.IsNullOrWhiteSpace(RoleFilter)
+                    && RoleFilter != "All"
+                    && !roles.Contains(RoleFilter))
+                {
+                    continue;
+                }
 
-                        FullName = user.FullName,
+                Users.Add(new UserListItemViewModel
+                {
+                    Id = user.Id,
 
-                        Email = user.Email ?? "-",
+                    FullName = user.FullName,
 
-                        Role = roles.Count > 0
-                            ? string.Join(", ", roles)
-                            : "No Role",
+                    Email = user.Email ?? "-",
 
-                        IsActive = user.IsActive,
+                    Role = roles.Count > 0
+                        ? string.Join(", ", roles)
+                        : "No Role",
 
-                        CreatedAt = user.CreatedAt
-                    });
+                    IsActive = user.IsActive,
+
+                    CreatedAt = user.CreatedAt
+                });
             }
         }
     }

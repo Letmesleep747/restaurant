@@ -9,21 +9,17 @@
 {
     <div class="alert alert-success alert-dismissible fade show"
          role="alert">
-
         <i class="bi bi-check-circle"></i>
-
         @TempData["SuccessMessage"]
 
         <button type="button"
                 class="btn-close"
                 data-bs-dismiss="alert">
         </button>
-
     </div>
 }
 
 <div class="page-heading">
-
     <div>
         <h2>User Management</h2>
 
@@ -35,19 +31,14 @@
 
     <a asp-page="./Create"
        class="btn btn-primary">
-
         <i class="bi bi-person-plus"></i>
         Add Staff
-
     </a>
-
 </div>
-
 
 <div class="content-card">
 
     <div class="content-card-header">
-
         <div>
             <h5>System Accounts</h5>
 
@@ -59,12 +50,61 @@
         <span class="badge text-bg-light">
             @Model.Users.Count Users
         </span>
-
     </div>
 
+    <!-- Category Filter -->
+    <div class="user-filter-section">
+        <form method="get" class="user-filter-form">
+
+            <div class="user-filter-field">
+                <label for="roleFilter" class="form-label">
+                    Filter by Category
+                </label>
+
+                <select id="roleFilter"
+                        name="RoleFilter"
+                        class="form-select user-filter-select">
+
+                    <option value="All"
+                            selected="@(Model.RoleFilter == "All")">
+                        All Users
+                    </option>
+
+                    <option value="Administrator"
+                            selected="@(Model.RoleFilter == "Administrator")">
+                        Administrators
+                    </option>
+
+                    <option value="RestaurantStaff"
+                            selected="@(Model.RoleFilter == "RestaurantStaff")">
+                        Restaurant Staff
+                    </option>
+
+                    <option value="Customer"
+                            selected="@(Model.RoleFilter == "Customer")">
+                        Customers
+                    </option>
+                </select>
+            </div>
+
+            <div class="user-filter-actions">
+                <button type="submit"
+                        class="btn btn-primary user-filter-button">
+                    <i class="bi bi-funnel"></i>
+                    Apply Filter
+                </button>
+
+                <a asp-page="./Index"
+                   class="btn btn-outline-secondary user-filter-button">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    Reset
+                </a>
+            </div>
+
+        </form>
+    </div>
 
     <div class="table-responsive">
-
         <table class="table admin-table">
 
             <thead>
@@ -80,69 +120,81 @@
 
             <tbody>
 
-                @foreach (var user in Model.Users)
+                @if (Model.Users.Any())
+                {
+                    @foreach (var user in Model.Users)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@user.FullName</strong>
+                            </td>
+
+                            <td>
+                                @user.Email
+                            </td>
+
+                            <td>
+                                <span class="badge text-bg-secondary">
+                                    @user.Role
+                                </span>
+                            </td>
+
+                            <td>
+                                @if (user.IsActive)
+                                {
+                                    <span class="status-badge active">
+                                        Active
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge inactive">
+                                        Inactive
+                                    </span>
+                                }
+                            </td>
+
+                            <td>
+                                @(user.CreatedAt
+                                    .ToLocalTime()
+                                    .ToString("dd MMM yyyy"))
+                            </td>
+
+                            <td>
+                                <a asp-page="./Edit"
+                                   asp-route-id="@user.Id"
+                                   class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i>
+                                    Edit
+                                </a>
+
+                                <a asp-page="./ResetPassword"
+                                   asp-route-id="@user.Id"
+                                   class="btn btn-sm btn-outline-warning">
+                                    <i class="bi bi-key"></i>
+                                    Reset Password
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
                 {
                     <tr>
+                        <td colspan="6"
+                            class="text-center py-4">
 
-                        <td>
-                            <strong>@user.FullName</strong>
+                            <i class="bi bi-people fs-3 text-muted"></i>
+
+                            <p class="text-muted mt-2 mb-0">
+                                No users found in this category.
+                            </p>
                         </td>
-
-                        <td>
-                            @user.Email
-                        </td>
-
-                        <td>
-                            <span class="badge text-bg-secondary">
-                                @user.Role
-                            </span>
-                        </td>
-
-                        <td>
-                            @if (user.IsActive)
-                            {
-                                <span class="status-badge active">
-                                    Active
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="status-badge inactive">
-                                    Inactive
-                                </span>
-                            }
-                        </td>
-
-                        <td>
-                            @(user.CreatedAt
-                                .ToLocalTime()
-                                .ToString("dd MMM yyyy"))
-                        </td>
-
-                        <td>
-                            <a asp-page="./Edit"
-                               asp-route-id="@user.Id"
-                               class="btn btn-sm btn-outline-secondary">
-
-                                <i class="bi bi-pencil"></i>
-                                Edit
-                            </a>
-
-                            <a asp-page="./ResetPassword"
-                               asp-route-id="@user.Id"
-                               class="btn btn-sm btn-outline-warning">
-                                <i class="bi bi-key"></i>
-                                Reset Password
-                            </a>
-                        </td>
-
                     </tr>
                 }
 
             </tbody>
-
         </table>
-
     </div>
 
 </div>
