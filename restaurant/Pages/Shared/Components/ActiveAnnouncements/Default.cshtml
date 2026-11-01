@@ -1,0 +1,14 @@
+@model List<restaurant.Models.Announcement>
+
+@if (Model.Any())
+{
+    <section class="mb-4" aria-label="Announcements">
+        @foreach (var item in Model)
+        {
+            <div class="alert alert-info mb-2" role="alert">
+                <div class="fw-semibold">📢 @item.Title</div>
+                <div class="small" style="white-space: pre-line;">@item.Message</div>
+            </div>
+        }
+    </section>
+}

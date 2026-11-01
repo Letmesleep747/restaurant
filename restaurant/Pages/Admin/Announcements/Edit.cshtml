@@ -1,0 +1,82 @@
+@page "{id:int}"
+@model restaurant.Pages.Admin.Announcements.EditModel
+
+@{
+    ViewData["Title"] = "Edit Announcement";
+}
+
+<div class="container-fluid py-3">
+    <h2 class="fw-bold mb-1">Edit Announcement</h2>
+    <p class="text-muted mb-4">Update the announcement details.</p>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <form method="post">
+                <input type="hidden" asp-for="Announcement.Id" />
+                <input type="hidden" asp-for="Announcement.IsPublished" />
+                <input type="hidden" asp-for="Announcement.CreatedAt" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Announcement.Title"
+                           class="form-label">Title</label>
+                    <input asp-for="Announcement.Title"
+                           class="form-control" />
+                    <span asp-validation-for="Announcement.Title"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Announcement.Message"
+                           class="form-label">Message</label>
+                    <textarea asp-for="Announcement.Message"
+                              class="form-control"
+                              rows="5"></textarea>
+                    <span asp-validation-for="Announcement.Message"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Announcement.StartDate"
+                               class="form-label">Start Date (optional)</label>
+                        <input asp-for="Announcement.StartDate"
+                               type="date"
+                               class="form-control" />
+                        <span asp-validation-for="Announcement.StartDate"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Announcement.EndDate"
+                               class="form-label">End Date (optional)</label>
+                        <input asp-for="Announcement.EndDate"
+                               type="date"
+                               class="form-control" />
+                        <span asp-validation-for="Announcement.EndDate"
+                              class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-check mb-4">
+                    <input asp-for="Announcement.IsActive"
+                           class="form-check-input" />
+                    <label asp-for="Announcement.IsActive"
+                           class="form-check-label">Active</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Save Changes
+                </button>
+                <a asp-page="./Index"
+                   class="btn btn-outline-secondary ms-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
