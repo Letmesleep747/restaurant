@@ -3,27 +3,38 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RROMS.Models
 {
+    [Table("Orders")]
     public class Order
     {
-        public int OrderId { get; set; }
+        [Key]
+        [Column("Id")]
+        public int Id { get; set; }
+
+        [Required]
+        public string CustomerId { get; set; } = string.Empty;
 
         public int? ReservationId { get; set; }
 
         [Required]
-        [StringLength(100)]
-        public string CustomerName { get; set; } = "";
-
         public DateTime OrderDate { get; set; } = DateTime.Now;
+
+        [Required]
+        public string Status { get; set; } = "Preparing";
 
         [Column(TypeName = "decimal(10,2)")]
         public decimal TotalAmount { get; set; }
 
-        [Required]
-        public string OrderStatus { get; set; } = "Preparing";
+        public string? Notes { get; set; }
 
-        [StringLength(500)]
-        public string? SpecialRequest { get; set; }
+        // Relationships
+        [ForeignKey(nameof(CustomerId))]
+        public ApplicationUser? Customer { get; set; }
+
+        [ForeignKey(nameof(ReservationId))]
+        public Reservation? Reservation { get; set; }
 
         public List<OrderItem> OrderItems { get; set; } = new();
+
+        public List<Payment> Payments { get; set; } = new();
     }
 }

@@ -1,0 +1,39 @@
+﻿@page
+@model RROMS.Pages.Staff.DatabaseTestModel
+
+@{
+    ViewData["Title"] = "Database Connection Test";
+}
+
+<div class="container mt-4">
+
+    <h2>Azure SQL Connection Test</h2>
+
+    @if (Model.IsConnected)
+    {
+        <div class="alert alert-success">
+            Successfully connected to Azure SQL Database!
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            <h5>Database Connection Failed</h5>
+
+            <p>
+                The application could not connect to Azure SQL.
+            </p>
+
+            <p>
+                Check the Visual Studio application logs
+                for the detailed database error.
+            </p>
+        </div>
+    }
+
+    <a asp-page="/Staff/Dashboard"
+       class="btn btn-secondary">
+        Back to Dashboard
+    </a>
+
+</div>

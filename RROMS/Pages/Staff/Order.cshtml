@@ -1,0 +1,924 @@
+﻿
+@page
+@model RROMS.Pages.Staff.OrderModel
+
+@{
+    ViewData["Title"] = "Order Management";
+}
+
+<style>
+    .order-header {
+        background: #243447;
+        color: white;
+        padding: 25px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+    }
+
+    .order-card {
+        border: none;
+        border-radius: 12px;
+    }
+
+    .order-stat {
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .action-buttons button {
+        margin: 2px;
+    }
+
+    .table th {
+        white-space: nowrap;
+    }
+</style>
+
+<div class="container mt-4 mb-5">
+
+    <div class="order-header">
+        <h2>Order Management</h2>
+        <p class="mb-0">Manage restaurant orders and preparation status.</p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <a asp-page="/Staff/Dashboard" class="btn btn-outline-dark">Dashboard</a>
+        <a asp-page="/Staff/Reservations" class="btn btn-outline-primary">Reservations</a>
+        <a asp-page="/Staff/Order" class="btn btn-outline-success">Orders</a>
+        <a asp-page="/Staff/Payment" class="btn btn-outline-warning">Payments</a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="card order-card shadow-sm">
+                <div class="card-body">
+                    <h6>Total Orders</h6>
+                    <div class="order-stat" id="totalOrders">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card order-card shadow-sm">
+                <div class="card-body">
+                    <h6>Pending</h6>
+                    <div class="order-stat text-secondary" id="pendingOrders">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card order-card shadow-sm">
+                <div class="card-body">
+                    <h6>Preparing</h6>
+                    <div class="order-stat text-warning" id="preparingOrders">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card order-card shadow-sm">
+                <div class="card-body">
+                    <h6>Ready</h6>
+                    <div class="order-stat text-primary" id="readyOrders">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card order-card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label">Search Orders</label>
+                    <input type="text"
+                           id="searchInput"
+                           class="form-control"
+                           placeholder="Order ID, customer, or table..."
+                           oninput="renderOrders()" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Filter Status</label>
+                    <select id="statusFilter"
+                            class="form-select"
+                            onchange="renderOrders()">
+                        <option value="All">All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Preparing">Preparing</option>
+                        <option value="Ready to Serve">Ready to Serve</option>
+                        <option value="Ready">Ready (Legacy)</option>
+                        <option value="Served">Served</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4 text-md-end">
+                    <button type="button"
+                            class="btn btn-primary"
+                            onclick="openAddOrderModal()">
+                        + Add New Order
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card order-card shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Customer Orders</h5>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Table</th>
+                            <th>Items</th>
+                            <th>Total (RM)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderTableBody"></tbody>
+                </table>
+            </div>
+
+            <p id="emptyMessage" class="text-center text-muted d-none">
+                No orders found.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Add / Edit Order Modal -->
+<div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderModalTitle">Add New Order</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="orderForm">
+                @Html.AntiForgeryToken()
+
+                <div class="modal-body">
+                    <input type="hidden" id="orderId" />
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label">Order Type</label>
+                            <select id="orderType" class="form-select">
+                                <option value="WalkIn">Walk-in Order</option>
+                                <option value="Reservation">Reservation Order</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6" id="reservationField">
+                            <label class="form-label">Select Reservation</label>
+                            <select id="reservationId" class="form-select">
+                                <option value="">Select Reservation</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6" id="customerField">
+                            <label class="form-label">Registered Customer Name</label>
+                            <input type="text"
+                                   id="customerName"
+                                   class="form-control"
+                                   placeholder="Enter an existing customer's full name"
+                                   required />
+
+                            <small class="text-muted">
+                                The customer must already have a registered account.
+                            </small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Table Number</label>
+                            <input type="text"
+                                   id="tableNumber"
+                                   class="form-control"
+                                   readonly
+                                   placeholder="Not assigned for walk-in" />
+                            <small class="text-muted">
+                                Reservation orders use the table assigned to the reservation.
+                            </small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Food Item</label>
+                            <select id="foodItem" class="form-select" required>
+                                <option value="">Loading menu items...</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Quantity</label>
+                            <input type="number"
+                                   id="quantity"
+                                   class="form-control"
+                                   min="1"
+                                   max="100"
+                                   value="1"
+                                   required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Order Status</label>
+                            <select id="orderStatus" class="form-select">
+                                <option value="Pending">Pending</option>
+                                <option value="Preparing">Preparing</option>
+                                <option value="Ready to Serve">Ready to Serve</option>
+                                <option value="Served">Served</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <h6>Order Items</h6>
+
+                    <button type="button"
+                            class="btn btn-outline-primary btn-sm mb-3"
+                            onclick="addItem()">
+                        + Add Item
+                    </button>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Food</th>
+                                    <th>Quantity</th>
+                                    <th>Subtotal</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="selectedItemsBody"></tbody>
+                        </table>
+                    </div>
+
+                    <h5 class="text-end">
+                        Total: RM <span id="orderTotal">0.00</span>
+                    </h5>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Close
+                    </button>
+
+                    <button type="submit" class="btn btn-primary">
+                        Save Order
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- View Order Modal -->
+<div class="modal fade" id="viewOrderModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Order Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="orderDetails"></div>
+
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const pageUrl = window.location.pathname;
+
+    let menuItems = [];
+
+    let orders = [];
+    let reservations = [];
+    let selectedItems = [];
+
+    const orderModal = new bootstrap.Modal(
+        document.getElementById("orderModal")
+    );
+
+    const viewOrderModal = new bootstrap.Modal(
+        document.getElementById("viewOrderModal")
+    );
+
+    function getAntiForgeryToken() {
+        return document.querySelector(
+            'input[name="__RequestVerificationToken"]'
+        )?.value || "";
+    }
+
+    async function apiRequest(url, options = {}) {
+        const headers = {
+            "Content-Type": "application/json",
+            "RequestVerificationToken": getAntiForgeryToken(),
+            ...(options.headers || {})
+        };
+
+        const response = await fetch(url, {
+            ...options,
+            headers
+        });
+
+        let result;
+
+        try {
+            result = await response.json();
+        } catch {
+            throw new Error("The server returned an invalid response.");
+        }
+
+        if (!response.ok || result.success === false) {
+            throw new Error(result.message || "Request failed.");
+        }
+
+        return result;
+    }
+
+    function formatOrderId(id) {
+        return "ORD" + String(id).padStart(3, "0");
+    }
+
+    function calculateTotal(items) {
+        return items.reduce((sum, item) => {
+            return sum +
+                Number(item.price) * Number(item.quantity);
+        }, 0);
+    }
+
+    async function loadOrders() {
+        try {
+            const result = await apiRequest(
+                `${pageUrl}?handler=List`,
+                { method: "GET" }
+            );
+
+            orders = result.orders || [];
+            renderOrders();
+        } catch (error) {
+            console.error(error);
+            alert("Unable to load orders: " + error.message);
+        }
+    }
+
+    async function loadReservations() {
+        try {
+            const result = await apiRequest(
+                `${pageUrl}?handler=Reservations`,
+                { method: "GET" }
+            );
+
+            reservations = result.reservations || [];
+            populateReservations();
+        } catch (error) {
+            console.error(error);
+            alert("Unable to load reservations: " + error.message);
+        }
+    }
+
+    async function loadMenuItems() {
+        try {
+            const result = await apiRequest(
+                `${pageUrl}?handler=MenuItems`,
+                { method: "GET" }
+            );
+
+            menuItems = result.menuItems || [];
+
+            const select = document.getElementById("foodItem");
+            select.innerHTML = "";
+
+            if (menuItems.length === 0) {
+                select.innerHTML =
+                    '<option value="">No available menu items</option>';
+                return;
+            }
+
+            const placeholder = document.createElement("option");
+            placeholder.value = "";
+            placeholder.textContent = "Select food item";
+            select.appendChild(placeholder);
+
+            menuItems.forEach(item => {
+                const option = document.createElement("option");
+
+                option.value = item.name;
+                option.textContent =
+                    `${item.name} - RM ${Number(item.price).toFixed(2)}`;
+
+                select.appendChild(option);
+            });
+
+        } catch (error) {
+            console.error(error);
+
+            document.getElementById("foodItem").innerHTML =
+                '<option value="">Unable to load menu items</option>';
+
+            alert("Unable to load menu items: " + error.message);
+        }
+    }
+
+    function populateReservations() {
+        const select = document.getElementById("reservationId");
+        select.innerHTML = '<option value="">Select Reservation</option>';
+
+        reservations.forEach(reservation => {
+            const option = document.createElement("option");
+            option.value = reservation.id;
+
+            option.textContent =
+                `#${reservation.id} - ${reservation.customer} - ` +
+                `${reservation.date.substring(0, 10)} ${reservation.time} - ` +
+                `Table ${reservation.table}`;
+
+            select.appendChild(option);
+        });
+    }
+
+    function updateOrderTypeFields() {
+        const type = document.getElementById("orderType").value;
+        const isReservation = type === "Reservation";
+
+        document.getElementById("reservationField").style.display =
+            isReservation ? "" : "none";
+
+        document.getElementById("customerField").style.display =
+            isReservation ? "none" : "";
+
+        document.getElementById("reservationId").required = isReservation;
+        document.getElementById("customerName").required = !isReservation;
+
+        if (!isReservation) {
+            document.getElementById("reservationId").value = "";
+            document.getElementById("customerName").value = "";
+            document.getElementById("tableNumber").value = "";
+        } else {
+            updateReservationDetails();
+        }
+    }
+
+    function updateReservationDetails() {
+        const id = Number(
+            document.getElementById("reservationId").value
+        );
+
+        const reservation = reservations.find(r => r.id === id);
+
+        document.getElementById("customerName").value =
+            reservation?.customer || "";
+
+        document.getElementById("tableNumber").value =
+            reservation ? reservation.table : "";
+    }
+
+    document.getElementById("orderType")
+        .addEventListener("change", updateOrderTypeFields);
+
+    document.getElementById("reservationId")
+        .addEventListener("change", updateReservationDetails);
+
+    function renderOrders() {
+        const search = document.getElementById("searchInput")
+            .value.trim().toLowerCase();
+
+        const filter = document.getElementById("statusFilter").value;
+        const tbody = document.getElementById("orderTableBody");
+
+        tbody.innerHTML = "";
+
+        const filtered = orders.filter(order => {
+            const orderId = formatOrderId(order.id).toLowerCase();
+            const customer = (order.customer || "").toLowerCase();
+            const table = (order.table || "").toLowerCase();
+
+            const matchesSearch =
+                orderId.includes(search) ||
+                String(order.id).includes(search) ||
+                customer.includes(search) ||
+                table.includes(search) ||
+                ("table " + table).includes(search);
+
+            const matchesStatus =
+                filter === "All" || order.status === filter;
+
+            return matchesSearch && matchesStatus;
+        });
+
+        filtered.forEach(order => {
+            const row = document.createElement("tr");
+
+            const values = [
+                formatOrderId(order.id),
+                order.customer,
+                order.table === "Walk-in"
+                    ? "Walk-in"
+                    : "Table " + order.table,
+                order.items.reduce((sum, item) =>
+                    sum + Number(item.quantity), 0),
+                Number(order.total).toFixed(2)
+            ];
+
+            values.forEach(value => {
+                const cell = document.createElement("td");
+                cell.textContent = value;
+                row.appendChild(cell);
+            });
+
+            const statusCell = document.createElement("td");
+            const badge = document.createElement("span");
+
+            const statusClasses = {
+                Pending: "bg-secondary",
+                Preparing: "bg-warning text-dark",
+                Ready: "bg-primary",
+                "Ready to Serve": "bg-primary",
+                Served: "bg-success",
+                Completed: "bg-success",
+                Cancelled: "bg-danger"
+            };
+
+            badge.className =
+                "badge " + (statusClasses[order.status] || "bg-secondary");
+
+            badge.textContent = order.status;
+            statusCell.appendChild(badge);
+            row.appendChild(statusCell);
+
+            const actionCell = document.createElement("td");
+            actionCell.className = "action-buttons";
+
+            function addButton(label, css, callback) {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "btn btn-sm " + css;
+                button.textContent = label;
+                button.addEventListener("click", callback);
+                actionCell.appendChild(button);
+            }
+
+            addButton("View", "btn-outline-info",
+                () => viewOrder(order.id));
+
+            if (order.status !== "Completed" &&
+                order.status !== "Cancelled") {
+
+                if (order.status !== "Served") {
+                    addButton("Edit", "btn-outline-primary",
+                        () => editOrder(order.id));
+                }
+
+                const nextStatus = {
+                    Pending: "Preparing",
+                    Preparing: "Ready to Serve",
+                    Ready: "Served",
+                    "Ready to Serve": "Served",
+                    Served: "Completed"
+                }[order.status];
+
+                if (nextStatus) {
+                    addButton("Mark " + nextStatus, "btn-success",
+                        () => updateOrderStatus(order.id, nextStatus));
+                }
+
+                addButton("Cancel", "btn-outline-danger",
+                    () => cancelOrder(order.id));
+            }
+
+            row.appendChild(actionCell);
+            tbody.appendChild(row);
+        });
+
+        document.getElementById("emptyMessage")
+            .classList.toggle("d-none", filtered.length > 0);
+
+        document.getElementById("totalOrders").textContent =
+            orders.length;
+
+        document.getElementById("pendingOrders").textContent =
+            orders.filter(o => o.status === "Pending").length;
+
+        document.getElementById("preparingOrders").textContent =
+            orders.filter(o => o.status === "Preparing").length;
+
+        document.getElementById("readyOrders").textContent =
+            orders.filter(o =>
+                o.status === "Ready" ||
+                o.status === "Ready to Serve"
+            ).length;
+    }
+
+    function openAddOrderModal() {
+        document.getElementById("orderForm").reset();
+        document.getElementById("orderId").value = "";
+        document.getElementById("orderModalTitle").textContent =
+            "Add New Order";
+
+        selectedItems = [];
+        renderSelectedItems();
+        updateOrderTypeFields();
+
+        orderModal.show();
+    }
+
+    function addItem() {
+        const name = document.getElementById("foodItem").value;
+
+        const quantity = Number(
+            document.getElementById("quantity").value
+        );
+
+        if (!name) {
+            alert("Please select a food item.");
+            return;
+        }
+
+        if (!Number.isInteger(quantity) ||
+            quantity < 1 || quantity > 100) {
+            alert("Please enter a quantity between 1 and 100.");
+            return;
+        }
+
+        const menuItem = menuItems.find(item => item.name === name);
+
+        if (!menuItem) {
+            alert("Selected menu item is unavailable.");
+            return;
+        }
+
+        const existing = selectedItems.find(i => i.name === name);
+
+        if (existing) {
+            if (existing.quantity + quantity > 100) {
+                alert("Maximum quantity for an item is 100.");
+                return;
+            }
+
+            existing.quantity += quantity;
+        } else {
+            selectedItems.push({
+                name: menuItem.name,
+                quantity: quantity,
+                price: Number(menuItem.price)
+            });
+        }
+
+        renderSelectedItems();
+    }
+
+    function removeItem(index) {
+        selectedItems.splice(index, 1);
+        renderSelectedItems();
+    }
+
+    function renderSelectedItems() {
+        const tbody = document.getElementById("selectedItemsBody");
+        tbody.innerHTML = "";
+
+        selectedItems.forEach((item, index) => {
+            const row = document.createElement("tr");
+
+            const nameCell = document.createElement("td");
+            nameCell.textContent = item.name;
+
+            const quantityCell = document.createElement("td");
+            quantityCell.textContent = item.quantity;
+
+            const subtotalCell = document.createElement("td");
+            subtotalCell.textContent =
+                "RM " + (item.price * item.quantity).toFixed(2);
+
+            const actionCell = document.createElement("td");
+            const removeButton = document.createElement("button");
+
+            removeButton.type = "button";
+            removeButton.className = "btn btn-sm btn-danger";
+            removeButton.textContent = "Remove";
+            removeButton.addEventListener("click", () =>
+                removeItem(index));
+
+            actionCell.appendChild(removeButton);
+            row.append(nameCell, quantityCell, subtotalCell, actionCell);
+            tbody.appendChild(row);
+        });
+
+        document.getElementById("orderTotal").textContent =
+            calculateTotal(selectedItems).toFixed(2);
+    }
+
+        document.getElementById("orderForm")
+        .addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            if (selectedItems.length === 0) {
+                alert("Please add at least one food item.");
+                return;
+            }
+
+                const orderType = document.getElementById("orderType").value;
+                const reservationValue =
+                    document.getElementById("reservationId").value;
+
+                if (orderType === "Reservation" && !reservationValue) {
+                    alert("Please select a reservation.");
+                    return;
+                }
+
+                const customerName =
+                    document.getElementById("customerName").value.trim();
+
+                if (orderType === "WalkIn" && !customerName) {
+                    alert("Please enter a customer name.");
+                    return;
+                }
+
+                const data = {
+                    orderId: document.getElementById("orderId").value
+                        ? Number(document.getElementById("orderId").value)
+                        : null,
+
+                    reservationId: orderType === "Reservation"
+                        ? Number(reservationValue)
+                        : null,
+
+                    customerName,
+                    status: document.getElementById("orderStatus").value,
+
+                    items: selectedItems.map(item => ({
+                        name: item.name,
+                        quantity: item.quantity
+                    }))
+                };
+
+                const submitButton =
+                    document.querySelector('#orderForm button[type="submit"]');
+
+                submitButton.disabled = true;
+
+                try {
+                    const result = await apiRequest(
+                        `${pageUrl}?handler=Save`,
+                        {
+                            method: "POST",
+                            body: JSON.stringify(data)
+                        }
+                    );
+
+                    orderModal.hide();
+                    await loadOrders();
+                    alert(result.message || "Order saved successfully.");
+                } catch (error) {
+                    alert("Unable to save order: " + error.message);
+                } finally {
+                    submitButton.disabled = false;
+                }
+            });
+
+    function editOrder(id) {
+        const order = orders.find(o => o.id === id);
+        if (!order) return;
+
+        document.getElementById("orderId").value = order.id;
+        document.getElementById("orderModalTitle").textContent =
+            "Edit Order";
+
+        document.getElementById("orderStatus").value = order.status;
+
+        if (order.reservationId) {
+            document.getElementById("orderType").value = "Reservation";
+            updateOrderTypeFields();
+            document.getElementById("reservationId").value =
+                order.reservationId;
+            updateReservationDetails();
+        } else {
+            document.getElementById("orderType").value = "WalkIn";
+            updateOrderTypeFields();
+            document.getElementById("customerName").value = order.customer;
+        }
+
+        selectedItems = order.items.map(item => ({
+            name: item.name,
+            quantity: Number(item.quantity),
+            price: Number(item.price)
+        }));
+
+        renderSelectedItems();
+        orderModal.show();
+    }
+
+    function viewOrder(id) {
+        const order = orders.find(o => o.id === id);
+        if (!order) return;
+
+        const container = document.getElementById("orderDetails");
+        container.innerHTML = "";
+
+        function addDetail(label, value) {
+            const p = document.createElement("p");
+            const strong = document.createElement("strong");
+
+            strong.textContent = label + ": ";
+            p.append(strong, document.createTextNode(value));
+            container.appendChild(p);
+        }
+
+        addDetail("Order ID", formatOrderId(order.id));
+        addDetail("Customer", order.customer);
+        addDetail("Table",
+            order.table === "Walk-in" ? "Walk-in" : "Table " + order.table);
+        addDetail("Status", order.status);
+
+        const heading = document.createElement("h6");
+        heading.textContent = "Ordered Items";
+        container.appendChild(heading);
+
+        const list = document.createElement("ul");
+
+        order.items.forEach(item => {
+            const li = document.createElement("li");
+            const price = Number(item.price);
+
+            li.textContent =
+                `${item.name} x ${item.quantity} - RM ` +
+                (price * item.quantity).toFixed(2);
+
+            list.appendChild(li);
+        });
+
+        container.appendChild(list);
+
+        addDetail("Total", "RM " + Number(order.total).toFixed(2));
+
+        viewOrderModal.show();
+    }
+
+    async function updateOrderStatus(id, status) {
+        try {
+            await apiRequest(`${pageUrl}?handler=UpdateStatus`, {
+                method: "POST",
+                body: JSON.stringify({
+                    orderId: id,
+                    status
+                })
+            });
+
+            await loadOrders();
+        } catch (error) {
+            alert("Unable to update order: " + error.message);
+        }
+    }
+
+    async function cancelOrder(id) {
+        const order = orders.find(o => o.id === id);
+
+        if (!order ||
+            order.status === "Served" ||
+            order.status === "Cancelled") {
+            return;
+        }
+
+        if (!confirm("Are you sure you want to cancel this order?")) {
+            return;
+        }
+
+        await updateOrderStatus(id, "Cancelled");
+    }
+
+    async function initializePage() {
+        await loadMenuItems();
+        await loadReservations();
+        await loadOrders();
+
+        updateOrderTypeFields();
+    }
+
+    initializePage();
+</script>
+}
