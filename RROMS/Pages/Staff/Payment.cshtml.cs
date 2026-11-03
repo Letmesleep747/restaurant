@@ -20,6 +20,7 @@ namespace RROMS.Pages.Staff
         }
 
         // GET: /Staff/Payment?handler=List
+
         public async Task<IActionResult> OnGetListAsync()
         {
             var payments = await _context.Payments
@@ -32,6 +33,11 @@ namespace RROMS.Pages.Staff
                 .Include(p => p.Order)
                     .ThenInclude(o => o!.OrderItems)
                         .ThenInclude(i => i.MenuItem)
+                // Exclude cancelled orders and cancelled payments.
+                .Where(p =>
+                    p.Status != "Cancelled" &&
+                    p.Order != null &&
+                    p.Order.Status != "Cancelled")
                 .OrderByDescending(p => p.Id)
                 .ToListAsync();
 
@@ -72,13 +78,15 @@ namespace RROMS.Pages.Staff
             });
         }
 
+
         // POST: /Staff/Payment?handler=RecordPayment
+
         public async Task<IActionResult> OnPostRecordPaymentAsync(
             [FromBody] PaymentRequest request)
         {
             if (request == null || request.PaymentId <= 0)
             {
-                return new JsonResult(new
+                return BadRequest(new
                 {
                     success = false,
                     message = "Invalid payment information."
@@ -95,7 +103,7 @@ namespace RROMS.Pages.Staff
             if (string.IsNullOrWhiteSpace(request.Method) ||
                 !allowedMethods.Contains(request.Method.Trim()))
             {
-                return new JsonResult(new
+                return BadRequest(new
                 {
                     success = false,
                     message = "Please select a valid payment method."
@@ -113,7 +121,7 @@ namespace RROMS.Pages.Staff
 
                 if (payment == null)
                 {
-                    return new JsonResult(new
+                    return NotFound(new
                     {
                         success = false,
                         message = "Payment record was not found."
@@ -122,19 +130,46 @@ namespace RROMS.Pages.Staff
 
                 if (payment.Status == "Paid")
                 {
-                    return new JsonResult(new
+                    return BadRequest(new
                     {
                         success = false,
                         message = "This bill has already been paid."
                     });
                 }
 
+                if (payment.Status == "Cancelled")
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Cancelled payments cannot be processed."
+                    });
+                }
+
                 if (payment.Order == null)
                 {
-                    return new JsonResult(new
+                    return BadRequest(new
                     {
                         success = false,
                         message = "The related order could not be found."
+                    });
+                }
+
+                if (payment.Order.Status == "Cancelled")
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Cancelled orders cannot receive payment."
+                    });
+                }
+
+                if (payment.Order.Status == "Completed")
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "This order is already completed."
                     });
                 }
 
@@ -147,6 +182,7 @@ namespace RROMS.Pages.Staff
                 payment.Order.Status = "Completed";
 
                 await _context.SaveChangesAsync();
+
                 await transaction.CommitAsync();
 
                 return new JsonResult(new
@@ -163,13 +199,14 @@ namespace RROMS.Pages.Staff
             {
                 await transaction.RollbackAsync();
 
-                return new JsonResult(new
+                return StatusCode(500, new
                 {
                     success = false,
                     message = "Unable to record payment. Please try again."
                 });
             }
         }
+
 
         public class PaymentRequest
         {

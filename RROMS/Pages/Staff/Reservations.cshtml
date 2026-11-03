@@ -1,158 +1,170 @@
-﻿@page
+﻿
+@page
 @model RROMS.Pages.Staff.ReservationsModel
 
 @{
     ViewData["Title"] = "Reservation Management";
 }
 
-<style>
-    .reservation-header {
-        background: #243447;
-        color: white;
-        padding: 25px;
-        border-radius: 10px;
-        margin-bottom: 25px;
-    }
-
-    .reservation-card {
-        border: none;
-        border-radius: 12px;
-    }
-
-    .action-buttons button {
-        margin: 2px;
-    }
-
-    .table th {
-        white-space: nowrap;
-    }
-</style>
-
-<div class="container mt-4 mb-5">
-
-    <div class="reservation-header">
+<!-- Page Heading -->
+<div class="page-heading">
+    <div>
         <h2>Reservation Management</h2>
-        <p class="mb-0">
-            Manage customer bookings and table reservations.
-        </p>
+        <p>Manage customer bookings and table reservations.</p>
     </div>
+</div>
 
-    <!-- Staff Navigation -->
-    <div class="d-flex flex-wrap gap-2 mb-4">
 
-        <a asp-page="/Staff/Dashboard"
-           class="btn btn-outline-dark">
-            Dashboard
-        </a>
+<!-- Reservation Summary Cards -->
+<div class="row g-4 mb-4">
 
-        <a asp-page="/Staff/Reservations"
-           class="btn btn-outline-primary">
-            Reservations
-        </a>
-
-        <a asp-page="/Staff/Order"
-           class="btn btn-outline-success">
-            Orders
-        </a>
-
-        <a asp-page="/Staff/Payment"
-           class="btn btn-outline-warning">
-            Payments
-        </a>
-
-    </div>
-
-    <!-- Search and Add Reservation -->
-    <div class="card reservation-card shadow-sm mb-4">
-        <div class="card-body">
-
-            <div class="row g-3 align-items-end">
-
-                <div class="col-md-5">
-                    <label class="form-label">
-                        Search Reservations
-                    </label>
-
-                    <input type="text"
-                           id="searchInput"
-                           class="form-control"
-                           placeholder="Search customer or phone..."
-                           oninput="renderReservations()" />
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label">
-                        Filter by Status
-                    </label>
-
-                    <select id="statusFilter"
-                            class="form-select"
-                            onchange="renderReservations()">
-                        <option value="All">All Status</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Confirmed">Confirmed</option>
-                        <option value="Cancelled">Cancelled</option>
-                    </select>
-                </div>
-
-                <div class="col-md-4 text-md-end">
-                    <button type="button"
-                            class="btn btn-primary"
-                            onclick="openAddModal()">
-                        + Add Reservation
-                    </button>
-                </div>
-
+    <div class="col-xl-3 col-md-6">
+        <div class="dashboard-card shadow-sm">
+            <div class="dashboard-card-icon">
+                <i class="bi bi-calendar-check"></i>
             </div>
-
+            <div>
+                <div class="dashboard-label">Total Reservations</div>
+                <h3 id="totalReservations">0</h3>
+            </div>
         </div>
     </div>
 
-    <!-- Reservation Table -->
-    <div class="card reservation-card shadow-sm">
-        <div class="card-header bg-white">
-            <h5 class="mb-0">Customer Reservations</h5>
-        </div>
-
-        <div class="card-body">
-
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-
-                    <thead class="table-light">
-                        <tr>
-                            <th>ID</th>
-                            <th>Customer</th>
-                            <th>Phone</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Guests</th>
-                            <th>Table</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="reservationTableBody">
-                    </tbody>
-
-                </table>
+    <div class="col-xl-3 col-md-6">
+        <div class="dashboard-card shadow-sm">
+            <div class="dashboard-card-icon">
+                <i class="bi bi-check-circle"></i>
             </div>
+            <div>
+                <div class="dashboard-label">Confirmed Reservations</div>
+                <h3 id="confirmedReservations">0</h3>
+            </div>
+        </div>
+    </div>
 
-            <p id="loadingMessage"
-               class="text-center text-muted">
-                Loading reservations...
-            </p>
+    <div class="col-xl-3 col-md-6">
+        <div class="dashboard-card shadow-sm">
+            <div class="dashboard-card-icon">
+                <i class="bi bi-x-circle"></i>
+            </div>
+            <div>
+                <div class="dashboard-label">Cancelled Reservations</div>
+                <h3 id="cancelledReservations">0</h3>
+            </div>
+        </div>
+    </div>
 
-            <p id="emptyMessage"
-               class="text-center text-muted d-none">
-                No reservations found.
-            </p>
-
+    <div class="col-xl-3 col-md-6">
+        <div class="dashboard-card shadow-sm">
+            <div class="dashboard-card-icon">
+                <i class="bi bi-calendar-day"></i>
+            </div>
+            <div>
+                <div class="dashboard-label">Today's Reservations</div>
+                <h3 id="todayReservations">0</h3>
+            </div>
         </div>
     </div>
 
 </div>
+
+
+<!-- Search and Add Reservation -->
+<div class="content-card shadow-sm mb-4">
+
+    <div class="row g-3 align-items-end">
+
+        <!-- Search -->
+        <div class="col-md-5">
+            <label class="form-label fw-semibold">
+                Search Reservations
+            </label>
+
+            <input type="text"
+                   id="searchInput"
+                   class="form-control"
+                   placeholder="Search customer or phone..."
+                   oninput="renderReservations()" />
+        </div>
+
+        <!-- Status Filter -->
+        <div class="col-md-3">
+            <label class="form-label fw-semibold">
+                Filter by Status
+            </label>
+
+            <select id="statusFilter"
+                    class="form-select"
+                    onchange="renderReservations()">
+                <option value="All">All Status</option>
+                <option value="Confirmed">Confirmed</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+        </div>
+
+        <!-- Add Reservation -->
+        <div class="col-md-4 text-md-end">
+            <button type="button"
+                    class="btn btn-primary"
+                    onclick="openAddModal()">
+                <i class="bi bi-plus-lg me-1"></i>
+                Add Reservation
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Reservation Table -->
+<div class="content-card shadow-sm">
+
+    <div class="content-card-header">
+        <div>
+            <h5>Customer Reservations</h5>
+            <p class="text-muted small mb-0">
+                View and manage all customer reservations.
+            </p>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table admin-table align-middle">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Guests</th>
+                    <th>Table</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="reservationTableBody">
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <p id="loadingMessage"
+       class="text-center text-muted py-3">
+        Loading reservations...
+    </p>
+
+    <p id="emptyMessage"
+       class="text-center text-muted py-3 d-none">
+        No reservations found.
+    </p>
+
+</div>
+
 
 <!-- Add / Edit Reservation Modal -->
 <div class="modal fade"
@@ -273,9 +285,7 @@
                                 Reservation Status
                             </label>
 
-                            <select id="reservationStatus"
-                                    class="form-select">
-                                <option value="Pending">Pending</option>
+                            <select id="reservationStatus" class="form-select">
                                 <option value="Confirmed">Confirmed</option>
                                 <option value="Cancelled">Cancelled</option>
                             </select>
@@ -420,6 +430,8 @@
                 );
 
                 reservations = result.data || [];
+
+                updateReservationSummary();
 
                 renderReservations();
 
@@ -584,6 +596,43 @@
 
         }
 
+        
+        function updateReservationSummary() {
+
+            const today = new Date();
+            const todayString =
+                today.getFullYear() + "-" +
+                String(today.getMonth() + 1).padStart(2, "0") + "-" +
+                String(today.getDate()).padStart(2, "0");
+
+            const total = reservations.length;
+
+            const confirmed = reservations.filter(r =>
+                r.status === "Confirmed"
+            ).length;
+
+            const cancelled = reservations.filter(r =>
+                r.status === "Cancelled"
+            ).length;
+
+            const todayCount = reservations.filter(r =>
+                r.date === todayString &&
+                r.status !== "Cancelled"
+            ).length;
+
+            document.getElementById("totalReservations").textContent = total;
+
+            document.getElementById("confirmedReservations").textContent =
+                confirmed;
+
+            document.getElementById("cancelledReservations").textContent =
+                cancelled;
+
+            document.getElementById("todayReservations").textContent =
+                todayCount;
+        }
+
+
         // ==========================================
         // RENDER RESERVATIONS
         // ==========================================
@@ -651,12 +700,10 @@
 
                 const badge = document.createElement("span");
 
-                badge.className = "badge " + (
+                badge.className = "status-badge " + (
                     r.status === "Confirmed"
-                        ? "bg-success"
-                        : r.status === "Pending"
-                            ? "bg-warning text-dark"
-                            : "bg-danger"
+                        ? "status-active"
+                        : "status-inactive"
                 );
 
                 badge.textContent = r.status;
@@ -693,16 +740,6 @@
                     () => editReservation(r.id)
                 );
 
-                if (r.status === "Pending") {
-
-                    addButton(
-                        "Confirm",
-                        "btn-success",
-                        () => updateStatus(r.id, "Confirmed")
-                    );
-
-                }
-
                 if (r.status !== "Cancelled") {
 
                     addButton(
@@ -717,15 +754,15 @@
 
                 tbody.appendChild(row);
 
-            });
+                });
 
-            document.getElementById("emptyMessage")
-                .classList.toggle(
-                    "d-none",
-                    filtered.length > 0
-                );
+                document.getElementById("emptyMessage")
+                    .classList.toggle(
+                        "d-none",
+                        filtered.length > 0
+                          );
 
-        }
+                }
 
         // ==========================================
         // ADD RESERVATION
@@ -741,7 +778,7 @@
                 "Add Reservation";
 
             document.getElementById("reservationStatus").value =
-                "Pending";
+                "Confirmed";
 
             // Reset customer search and selection
             document.getElementById("customerSearch").value = "";
@@ -849,8 +886,9 @@
 
                 durationMinutes: 120,
 
-                status:
-                    document.getElementById("reservationStatus").value,
+                status: idValue
+                    ? document.getElementById("reservationStatus").value
+                    : "Confirmed",
 
                 specialRequests:
                     document.getElementById("specialRequests").value.trim()

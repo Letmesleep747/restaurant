@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using RROMS.Data;
@@ -16,6 +17,10 @@ namespace RROMS.Pages.Staff
 
         public int TodaysReservationCount { get; set; }
 
+        public int UnpaidBillCount { get; set; }
+
+        public int ActiveOrderCount { get; set; }
+
         public List<Reservation> TodaysReservations { get; set; }
             = new List<Reservation>();
 
@@ -24,24 +29,43 @@ namespace RROMS.Pages.Staff
             var today = DateTime.Today;
             var tomorrow = today.AddDays(1);
 
-            // Count actual reservations for today.
+            // Count today's reservations, excluding cancelled reservations.
             TodaysReservationCount = await _context.Reservations
                 .AsNoTracking()
                 .CountAsync(r =>
                     r.ReservationDate >= today &&
-                    r.ReservationDate < tomorrow);
+                    r.ReservationDate < tomorrow &&
+                    r.Status != "Cancelled");
 
-            // Load today's actual reservation details.
+            // Load today's reservations, excluding cancelled reservations.
             TodaysReservations = await _context.Reservations
                 .AsNoTracking()
                 .Include(r => r.Customer)
                 .Include(r => r.RestaurantTable)
                 .Where(r =>
                     r.ReservationDate >= today &&
-                    r.ReservationDate < tomorrow)
+                    r.ReservationDate < tomorrow &&
+                    r.Status != "Cancelled")
                 .OrderBy(r => r.StartTime)
                 .Take(10)
                 .ToListAsync();
+
+            // Count unpaid bills, excluding cancelled payments
+            // and payments belonging to cancelled orders.
+            UnpaidBillCount = await _context.Payments
+                .AsNoTracking()
+                .CountAsync(p =>
+                    p.Status == "Unpaid" &&
+                    p.Order != null &&
+                    p.Order.Status != "Cancelled");
+
+            // Count active orders only.
+            ActiveOrderCount = await _context.Orders
+                .AsNoTracking()
+                .CountAsync(o =>
+                    o.Status == "Pending" ||
+                    o.Status == "Served");
+
         }
     }
 }

@@ -135,29 +135,9 @@ namespace RROMS.Pages.Staff
                 });
             }
 
-            var status = string.IsNullOrWhiteSpace(request.Status)
-                ? "Pending"
-                : request.Status.Trim();
-
-            var allowedStatuses = new[]
-            {
-                "Pending",
-                "Preparing",
-                "Ready",
-                "Ready to Serve",
-                "Served",
-                "Completed",
-                "Cancelled"
-            };
-
-            if (!allowedStatuses.Contains(status))
-            {
-                return BadRequest(new
-                {
-                    success = false,
-                    message = "Invalid order status."
-                });
-            }
+            // All newly created or edited orders must remain Pending.
+            // Served and Completed are handled by their respective workflows.
+            const string status = "Pending";
 
             // Find reservation, if this is a reservation order.
             Reservation? reservation = null;
@@ -305,14 +285,12 @@ namespace RROMS.Pages.Staff
                     });
                 }
 
-                if (order.Status == "Served" ||
-                    order.Status == "Completed" ||
-                    order.Status == "Cancelled")
+                if (order.Status != "Pending")
                 {
                     return BadRequest(new
                     {
                         success = false,
-                        message = "Served, completed or cancelled orders cannot be edited."
+                        message = "Only pending orders can be edited."
                     });
                 }
 
@@ -411,6 +389,7 @@ namespace RROMS.Pages.Staff
         }
 
         // POST: /Staff/Order?handler=UpdateStatus
+
         public async Task<IActionResult> OnPostUpdateStatusAsync(
             [FromBody] StatusRequest request)
         {
@@ -446,19 +425,9 @@ namespace RROMS.Pages.Staff
                 });
             }
 
-            var allowedNextStatuses = new Dictionary<string, string>
-            {
-                ["Pending"] = "Preparing",
-                ["Preparing"] = "Ready to Serve",
-                ["Ready"] = "Served",
-                ["Ready to Serve"] = "Served",
-                ["Served"] = "Completed"
-            };
-
             bool isValidNextStatus =
-                allowedNextStatuses.TryGetValue(
-                    order.Status, out var nextStatus) &&
-                nextStatus == request.Status;
+                order.Status == "Pending" &&
+                request.Status == "Served";
 
             bool isCancellation =
                 request.Status == "Cancelled";
@@ -472,16 +441,61 @@ namespace RROMS.Pages.Staff
                 });
             }
 
-            order.Status = request.Status;
+            await using var transaction =
+                await _context.Database.BeginTransactionAsync();
 
-            await _context.SaveChangesAsync();
-
-            return new JsonResult(new
+            try
             {
-                success = true,
-                message = "Order status updated successfully."
-            });
+                order.Status = request.Status;
+
+                // Cancel the associated unpaid payment when
+                // the order is cancelled.
+                if (isCancellation)
+                {
+                    var payment = await _context.Payments
+                        .FirstOrDefaultAsync(p => p.OrderId == order.Id);
+
+                    if (payment != null)
+                    {
+                        if (payment.Status == "Paid")
+                        {
+                            await transaction.RollbackAsync();
+
+                            return BadRequest(new
+                            {
+                                success = false,
+                                message = "A paid order cannot be cancelled."
+                            });
+                        }
+
+                        payment.Status = "Cancelled";
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                return new JsonResult(new
+                {
+                    success = true,
+                    message = isCancellation
+                        ? "Order and associated payment cancelled successfully."
+                        : "Order status updated successfully."
+                });
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Unable to update the order status."
+                });
+            }
         }
+
 
         // Request models used by the frontend.
         public class OrderRequest

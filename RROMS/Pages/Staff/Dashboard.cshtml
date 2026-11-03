@@ -1,237 +1,173 @@
-﻿@page
+﻿
+@page
 @model RROMS.Pages.Staff.DashboardModel
 
 @{
     ViewData["Title"] = "Staff Dashboard";
 }
 
-<style>
-    .staff-header {
-        background: #243447;
-        color: white;
-        padding: 25px;
-        border-radius: 10px;
-        margin-bottom: 25px;
-    }
-
-    .staff-nav {
-        background: #ffffff;
-        padding: 15px;
-        border-radius: 10px;
-        margin-bottom: 25px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    .staff-nav a {
-        margin-right: 10px;
-        text-decoration: none;
-    }
-
-    .dashboard-card {
-        border: none;
-        border-radius: 12px;
-        transition: transform 0.2s;
-    }
-
-    .dashboard-card:hover {
-        transform: translateY(-4px);
-    }
-
-    .stat-number {
-        font-size: 36px;
-        font-weight: bold;
-    }
-
-    .section-card {
-        border: none;
-        border-radius: 12px;
-    }
-</style>
-
-<div class="container mt-4 mb-5">
-
-    <!-- Header -->
-    <div class="staff-header">
-        <h2>Restaurant Staff Dashboard</h2>
-        <p class="mb-0">
-            Reservation and Order Operational Management System
-        </p>
+<div class="page-heading">
+    <div>
+        <h2>Dashboard</h2>
+        <p>Reservation and order operational overview</p>
     </div>
+</div>
 
-    <!-- Navigation -->
-    <div class="staff-nav">
-        <a asp-page="/Staff/Dashboard"
-           class="btn btn-dark">
-            Dashboard
-        </a>
-
-        <a asp-page="/Staff/Reservations"
-           class="btn btn-outline-primary">
-            Reservations
-        </a>
-
-        <a asp-page="/Staff/Order"
-           class="btn btn-outline-success">
-            Orders
-        </a>
-
-        <a asp-page="/Staff/Payment"
-           class="btn btn-outline-warning">
-            Payments
-        </a>
-    </div>
-
-    <!-- Summary Cards -->
-    <div class="row g-4">
-
-        <div class="col-md-4">
-            <div class="card dashboard-card shadow-sm h-100">
-                <div class="card-body">
-                    <h5>Today's Reservations</h5>
-
-                    <div class="stat-number text-primary">
-                        @Model.TodaysReservationCount
-                    </div>
-
-                    <p class="text-muted">
-                        View and manage customer reservations.
-                    </p>
-
-                    <a asp-page="/Staff/Reservations"
-                       class="btn btn-primary">
-                        Manage Reservations
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card dashboard-card shadow-sm h-100">
-                <div class="card-body">
-                    <h5>Active Orders</h5>
-
-                    <div class="stat-number text-success">
-                        8
-                    </div>
-
-                    <p class="text-muted">
-                        View and process customer orders.
-                    </p>
-
-                    <a asp-page="/Staff/Order"
-                       class="btn btn-success">
-                        Manage Orders
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card dashboard-card shadow-sm h-100">
-                <div class="card-body">
-                    <h5>Unpaid Bills</h5>
-
-                    <div class="stat-number text-warning">
-                        3
-                    </div>
-
-                    <p class="text-muted">
-                        View customer payment information.
-                    </p>
-
-                    <a asp-page="/Staff/Payment"
-                       class="btn btn-warning">
-                        Manage Payments
-                    </a>
-                </div>
-            </div>
-        </div>
-
-    </div>
+<!-- Summary Cards -->
+<div class="row g-4 mb-4">
 
     <!-- Today's Reservations -->
-    <div class="card section-card shadow-sm mt-4">
-
-        <div class="card-header bg-white">
-            <h5 class="mb-0">Today's Reservations</h5>
-        </div>
-
-        <div class="card-body">
-
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-
-                    <thead class="table-light">
-                        <tr>
-                            <th>Customer</th>
-                            <th>Time</th>
-                            <th>Guests</th>
-                            <th>Table</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @if (Model.TodaysReservations.Any())
-                        {
-                            @foreach (var reservation in Model.TodaysReservations)
-                            {
-                                var status = reservation.Status ?? "Unknown";
-
-                                var statusClass = status.ToLowerInvariant() switch
-                                {
-                                    "confirmed" => "bg-success",
-                                    "pending" => "bg-warning text-dark",
-                                    "cancelled" => "bg-danger",
-                                    "completed" => "bg-secondary",
-                                    _ => "bg-info text-dark"
-                                };
-
-                                <tr>
-                                    <td>
-                                        @(reservation.Customer?.FullName ?? "Unknown Customer")
-                                    </td>
-
-                                    <td>
-                                        @reservation.StartTime.ToString(@"hh\:mm")
-                                    </td>
-
-                                    <td>
-                                        @reservation.PartySize
-                                    </td>
-
-                                    <td>
-                                        @(reservation.RestaurantTable?.TableNumber != null
-                                            ? "Table " + reservation.RestaurantTable.TableNumber
-                                            : "Not Assigned")
-                                    </td>
-
-                                    <td>
-                                        <span class="badge @statusClass">
-                                            @status
-                                        </span>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="5" class="text-center text-muted py-4">
-                                    No reservations scheduled for today.
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-
-                </table>
+    <div class="col-md-4">
+        <div class="dashboard-card shadow-sm h-100">
+            <div class="dashboard-card-icon"
+                 style="background:#e8eef5; color:#263645;">
+                <i class="bi bi-calendar-check"></i>
             </div>
 
-            <a asp-page="/Staff/Reservations"
-               class="btn btn-outline-primary">
-                View All Reservations
-            </a>
+            <div>
+                <div class="dashboard-label">Today's Reservations</div>
 
+                <h3>@Model.TodaysReservationCount</h3>
+
+                <a asp-page="/Staff/Reservations"
+                   class="btn btn-sm btn-outline-primary mt-2">
+                    Manage Reservations
+                </a>
+            </div>
         </div>
     </div>
+
+    <!-- Active Orders -->
+    <div class="col-md-4">
+        <div class="dashboard-card shadow-sm h-100">
+            <div class="dashboard-card-icon"
+                 style="background:#e4f5eb; color:#23834d;">
+                <i class="bi bi-receipt"></i>
+            </div>
+
+            <div>
+                <div class="dashboard-label">Active Orders</div>
+
+                <h3>@Model.ActiveOrderCount</h3>
+
+                <a asp-page="/Staff/Order"
+                   class="btn btn-sm btn-outline-success mt-2">
+                    Manage Orders
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unpaid Bills -->
+    <div class="col-md-4">
+        <div class="dashboard-card shadow-sm h-100">
+            <div class="dashboard-card-icon"
+                 style="background:#fff3cd; color:#856404;">
+                <i class="bi bi-credit-card"></i>
+            </div>
+
+            <div>
+                <div class="dashboard-label">Unpaid Bills</div>
+
+                <h3>@Model.UnpaidBillCount</h3>
+
+                <a asp-page="/Staff/Payment"
+                   class="btn btn-sm btn-outline-warning mt-2">
+                    Manage Payments
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Today's Reservations -->
+<div class="content-card shadow-sm">
+
+    <div class="content-card-header">
+        <div>
+            <h5>Today's Reservations</h5>
+            <p class="text-muted small mb-0">
+                Overview of today's confirmed reservations
+            </p>
+        </div>
+
+        <a asp-page="/Staff/Reservations"
+           class="btn btn-outline-primary btn-sm">
+            View All Reservations
+        </a>
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table admin-table align-middle">
+
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Time</th>
+                    <th>Guests</th>
+                    <th>Table</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @if (Model.TodaysReservations.Any())
+                {
+                    @foreach (var reservation in Model.TodaysReservations)
+                    {
+                        var status = reservation.Status ?? "Unknown";
+
+                        var statusClass = status.ToLowerInvariant() switch
+                        {
+                            "confirmed" => "status-active",
+                            "cancelled" => "status-inactive",
+                            _ => ""
+                        };
+
+                        <tr>
+                            <td>
+                                @(reservation.Customer?.FullName ?? "Unknown Customer")
+                            </td>
+
+                            <td>
+                                @reservation.StartTime.ToString(@"hh\:mm")
+                            </td>
+
+                            <td>
+                                @reservation.PartySize
+                            </td>
+
+                            <td>
+                                @(reservation.RestaurantTable?.TableNumber != null
+                                    ? "Table " + reservation.RestaurantTable.TableNumber
+                                    : "Not Assigned")
+                            </td>
+
+                            <td>
+                                <span class="status-badge @statusClass">
+                                    @status
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5"
+                            class="text-center text-muted py-4">
+                            No reservations scheduled for today.
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
 </div>

@@ -38,6 +38,8 @@ namespace RROMS.Pages.Staff
                 .ThenBy(r => r.StartTime)
                 .ToListAsync();
 
+            var today = DateTime.Today;
+
             var reservations = rows.Select(r => new
             {
                 id = r.Id,
@@ -54,10 +56,26 @@ namespace RROMS.Pages.Staff
                 specialRequests = r.SpecialRequests
             }).ToList();
 
+            var summary = new
+            {
+                total = rows.Count,
+
+                confirmed = rows.Count(r =>
+                    r.Status == "Confirmed"),
+
+                cancelled = rows.Count(r =>
+                    r.Status == "Cancelled"),
+
+                today = rows.Count(r =>
+                    r.ReservationDate.Date == today &&
+                    r.Status != "Cancelled")
+            };
+
             return new JsonResult(new
             {
                 success = true,
-                data = reservations
+                data = reservations,
+                summary = summary
             });
         }
 
@@ -143,7 +161,7 @@ namespace RROMS.Pages.Staff
                     ? request.DurationMinutes
                     : 120,
                 PartySize = request.PartySize,
-                Status = NormalizeStatus(request.Status),
+                Status = "Confirmed",
                 SpecialRequests = request.SpecialRequests,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = null
@@ -288,12 +306,12 @@ namespace RROMS.Pages.Staff
 
         private static bool IsAllowedStatus(string? status)
         {
-            return status is "Pending" or "Confirmed" or "Cancelled";
+            return status is "Confirmed" or "Cancelled";
         }
 
         private static string NormalizeStatus(string? status)
         {
-            return IsAllowedStatus(status) ? status! : "Pending";
+            return IsAllowedStatus(status) ? status! : "Confirmed";
         }
 
         private BadRequestObjectResult BadRequestResult(string message)
@@ -330,7 +348,7 @@ namespace RROMS.Pages.Staff
 
             public int DurationMinutes { get; set; } = 120;
 
-            public string Status { get; set; } = "Pending";
+            public string Status { get; set; } = "Confirmed";
 
             public string? SpecialRequests { get; set; }
         }

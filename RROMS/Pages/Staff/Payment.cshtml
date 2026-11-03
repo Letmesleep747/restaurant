@@ -5,187 +5,131 @@
     ViewData["Title"] = "Payment Management";
 }
 
-<style>
-    .payment-header {
-        background: #243447;
-        color: white;
-        padding: 25px;
-        border-radius: 10px;
-        margin-bottom: 25px;
-    }
-
-    .payment-card {
-        border: none;
-        border-radius: 12px;
-    }
-
-    .payment-stat {
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-    .action-buttons button {
-        margin: 2px;
-    }
-
-    .table th {
-        white-space: nowrap;
-    }
-</style>
-
-<div class="container mt-4 mb-5">
-
-    <!-- Header -->
-    <div class="payment-header">
+<!-- Page Heading -->
+<div class="page-heading">
+    <div>
         <h2>Payment Management</h2>
-        <p class="mb-0">
-            Monitor customer bills and payment status.
-        </p>
+        <p>Monitor customer bills and manage payment records.</p>
     </div>
+</div>
 
-    
-    <!-- Staff Navigation -->
-    <div class="d-flex flex-wrap gap-2 mb-4">
+<!-- Payment Summary Cards -->
+<div class="row g-4 mb-4">
 
-        <a asp-page="/Staff/Dashboard"
-           class="btn btn-outline-dark">
-            Dashboard
-        </a>
-
-        <a asp-page="/Staff/Reservations"
-           class="btn btn-outline-primary">
-            Reservations
-        </a>
-
-        <a asp-page="/Staff/Order"
-           class="btn btn-outline-success">
-            Orders
-        </a>
-
-        <a asp-page="/Staff/Payment"
-           class="btn btn-outline-warning">
-            Payments
-        </a>
-
-    </div>
-
-
-    <!-- Summary Cards -->
-    <div class="row g-3 mb-4">
-
-        <div class="col-md-4">
-            <div class="card payment-card shadow-sm">
-                <div class="card-body">
-                    <h6>Total Bills</h6>
-                    <div class="payment-stat"
-                         id="totalBills">
-                        0
-                    </div>
-                </div>
+    <div class="col-xl-4 col-md-6">
+        <div class="dashboard-card shadow-sm">
+            <div class="dashboard-card-icon">
+                <i class="bi bi-receipt"></i>
             </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card payment-card shadow-sm">
-                <div class="card-body">
-                    <h6>Unpaid Bills</h6>
-                    <div class="payment-stat text-danger"
-                         id="unpaidBills">
-                        0
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card payment-card shadow-sm">
-                <div class="card-body">
-                    <h6>Total Collected</h6>
-                    <div class="payment-stat text-success">
-                        RM <span id="totalCollected">0.00</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Search and Filter -->
-    <div class="card payment-card shadow-sm mb-4">
-        <div class="card-body">
-            <div class="row g-3 align-items-end">
-
-                <div class="col-md-6">
-                    <label class="form-label">
-                        Search Payments
-                    </label>
-
-                    <input type="text"
-                           id="searchInput"
-                           class="form-control"
-                           placeholder="Bill ID, order ID, customer, table..."
-                           oninput="renderPayments()" />
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label">
-                        Payment Status
-                    </label>
-
-                    <select id="statusFilter"
-                            class="form-select"
-                            onchange="renderPayments()">
-                        <option value="All">All Status</option>
-                        <option value="Unpaid">Unpaid</option>
-                        <option value="Paid">Paid</option>
-                    </select>
-                </div>
-
-                <div class="col-md-3">
-                    <a asp-page="/Staff/Orders"
-                       class="btn btn-outline-primary w-100">
-                        View Orders
-                    </a>
-                </div>
-
+            <div>
+                <div class="dashboard-label">Total Bills</div>
+                <h3 id="totalBills">0</h3>
             </div>
         </div>
     </div>
 
-    <!-- Payment Table -->
-    <div class="card payment-card shadow-sm">
-        <div class="card-header bg-white">
-            <h5 class="mb-0">Customer Bills</h5>
+    <div class="col-xl-4 col-md-6">
+        <div class="dashboard-card shadow-sm">
+            <div class="dashboard-card-icon">
+                <i class="bi bi-clock-history"></i>
+            </div>
+            <div>
+                <div class="dashboard-label">Unpaid Bills</div>
+                <h3 id="unpaidBills">0</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-md-6">
+        <div class="dashboard-card shadow-sm">
+            <div class="dashboard-card-icon">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+            <div>
+                <div class="dashboard-label">Total Collected</div>
+                <h3>RM <span id="totalCollected">0.00</span></h3>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Search and Filter -->
+<div class="content-card shadow-sm mb-4">
+    <div class="row g-3 align-items-end">
+
+        <div class="col-md-6">
+            <label class="form-label fw-semibold">
+                Search Payments
+            </label>
+
+            <input type="text"
+                   id="searchInput"
+                   class="form-control"
+                   placeholder="Bill ID, order ID, customer, table..."
+                   oninput="renderPayments()" />
         </div>
 
-        <div class="card-body">
-            <div class="table-responsive">
+        <div class="col-md-3">
+            <label class="form-label fw-semibold">
+                Payment Status
+            </label>
 
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Bill ID</th>
-                            <th>Order ID</th>
-                            <th>Customer</th>
-                            <th>Table</th>
-                            <th>Total (RM)</th>
-                            <th>Status</th>
-                            <th>Payment Method</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
+            <select id="statusFilter"
+                    class="form-select"
+                    onchange="renderPayments()">
+                <option value="All">All Status</option>
+                <option value="Unpaid">Unpaid</option>
+                <option value="Paid">Paid</option>
+            </select>
+        </div>
 
-                    <tbody id="paymentTableBody"></tbody>
-                </table>
+        <div class="col-md-3">
+            <a asp-page="/Staff/Order"
+               class="btn btn-outline-primary w-100">
+                <i class="bi bi-receipt me-1"></i>
+                View Orders
+            </a>
+        </div>
 
-            </div>
+    </div>
+</div>
 
-            <p id="emptyMessage"
-               class="text-center text-muted d-none">
-                No bills found.
+<!-- Customer Bills Table -->
+<div class="content-card shadow-sm">
+
+    <div class="content-card-header">
+        <div>
+            <h5>Customer Bills</h5>
+            <p class="text-muted small mb-0">
+                View bills and record customer payments.
             </p>
         </div>
     </div>
+
+    <div class="table-responsive">
+        <table class="table admin-table align-middle">
+            <thead>
+                <tr>
+                    <th>Bill ID</th>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Table</th>
+                    <th>Total (RM)</th>
+                    <th>Status</th>
+                    <th>Payment Method</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="paymentTableBody"></tbody>
+        </table>
+    </div>
+
+    <p id="emptyMessage"
+       class="text-center text-muted py-3 d-none">
+        No bills found.
+    </p>
 
 </div>
 
@@ -351,14 +295,20 @@
             const filtered = payments.filter(p => {
                 const billId = formatBillId(p.id).toLowerCase();
                 const orderId = formatOrderId(p.orderId).toLowerCase();
-                const tableText = String(p.table).toLowerCase();
+
+                const tableValue = String(p.table ?? "").toLowerCase();
+
+                const displayedTable =
+                    p.table === "Walk-in" || p.table === "Not Assigned"
+                        ? tableValue
+                        : "table " + tableValue;
 
                 const matchesSearch =
                     billId.includes(search) ||
                     orderId.includes(search) ||
-                    p.customer.toLowerCase().includes(search) ||
-                    tableText.includes(search) ||
-                    String(p.table).includes(search);
+                    String(p.customer ?? "").toLowerCase().includes(search) ||
+                    tableValue.includes(search) ||
+                    displayedTable.includes(search);
 
                 const matchesStatus =
                     filter === "All" || p.status === filter;
@@ -388,9 +338,14 @@
                 const statusCell = document.createElement("td");
                 const badge = document.createElement("span");
 
-                badge.className = p.status === "Paid"
-                    ? "badge bg-success"
-                    : "badge bg-danger";
+                badge.className = "status-badge";
+
+                if (p.status === "Paid") {
+                    badge.classList.add("status-active");
+                }
+                else {
+                    badge.classList.add("status-inactive");
+                }
 
                 badge.textContent = p.status;
                 statusCell.appendChild(badge);
@@ -523,67 +478,82 @@
             paymentModal.show();
         }
 
-        document.getElementById("paymentForm")
-            .addEventListener("submit", async function (event) {
-                event.preventDefault();
+        
+            document.getElementById("paymentForm")
+                .addEventListener("submit", async function (event) {
+                    event.preventDefault();
 
-                const paymentId = Number(
-                    document.getElementById("paymentBillId").value
-                );
-
-                const method =
-                    document.getElementById("paymentMethod").value;
-
-                if (!method) {
-                    alert("Please select a payment method.");
-                    return;
-                }
-
-                const bill = payments.find(p => p.id === paymentId);
-
-                if (!bill || bill.status !== "Unpaid") {
-                    alert("This bill is no longer available for payment.");
-                    return;
-                }
-
-                try {
-                    const response = await fetch("?handler=RecordPayment", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "RequestVerificationToken":
-                                document.querySelector(
-                                    'input[name="__RequestVerificationToken"]'
-                                ).value
-                        },
-                        body: JSON.stringify({
-                            paymentId: paymentId,
-                            method: method
-                        })
-                    });
-
-                    const data = await response.json();
-
-                    if (!response.ok || !data.success) {
-                        alert(data.message || "Payment could not be recorded.");
-                        return;
-                    }
-
-                    paymentModal.hide();
-
-                    await loadPayments();
-
-                    alert(
-                        "Payment recorded successfully!\n" +
-                        "Order " + formatOrderId(data.orderId) +
-                        " has automatically changed to Completed."
+                    const submitButton = this.querySelector(
+                        'button[type="submit"]'
                     );
-                }
-                catch (error) {
-                    console.error(error);
-                    alert("An error occurred while recording the payment.");
-                }
-            });
+
+                    if (submitButton.disabled) return;
+
+                    submitButton.disabled = true;
+                    submitButton.textContent = "Processing...";
+
+                    try {
+                        const paymentId = Number(
+                            document.getElementById("paymentBillId").value
+                        );
+
+                        const method =
+                            document.getElementById("paymentMethod").value;
+
+                        if (!method) {
+                            alert("Please select a payment method.");
+                            return;
+                        }
+
+                        const bill = payments.find(p => p.id === paymentId);
+
+                        if (!bill || bill.status !== "Unpaid") {
+                            alert("This bill is no longer available for payment.");
+                            return;
+                        }
+
+                        const response = await fetch("?handler=RecordPayment", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "RequestVerificationToken":
+                                    document.querySelector(
+                                        'input[name="__RequestVerificationToken"]'
+                                    ).value
+                            },
+                            body: JSON.stringify({
+                                paymentId: paymentId,
+                                method: method
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (!response.ok || !data.success) {
+                            alert(data.message || "Payment could not be recorded.");
+                            return;
+                        }
+
+                        paymentModal.hide();
+
+                        await loadPayments();
+
+                        alert(
+                            "Payment recorded successfully!\n" +
+                            "Order " + formatOrderId(data.orderId) +
+                            " has automatically changed to Completed."
+                        );
+                    }
+                    catch (error) {
+                        console.error(error);
+                        alert("An error occurred while recording the payment.");
+                    }
+                    finally {
+                        submitButton.disabled = false;
+                        submitButton.textContent = "Confirm Payment";
+                    }
+                });
+
 
         loadPayments();
     </script>
