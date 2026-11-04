@@ -69,7 +69,12 @@ else
                                 <img src="@item.ImageUrl"
                                      class="food-image"
                                      alt="@item.Name"
-                                     loading="lazy" />
+                                     loading="lazy"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                                <div class="menu-item-fallback" style="display:none" aria-hidden="true">
+                                    <span>@categoryLabel</span>
+                                    <strong>@item.Name</strong>
+                                </div>
                             }
                             else
                             {

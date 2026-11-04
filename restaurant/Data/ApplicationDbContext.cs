@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using restaurant.Models;
 using restaurant.Models.Enums;
 using restaurant.Models.Shared;
@@ -54,9 +55,13 @@ namespace restaurant.Data
             builder.Entity<Order>().Property(o => o.Status)
                 .HasConversion<string>().HasMaxLength(20);
             builder.Entity<Payment>().Property(p => p.Status)
-                .HasConversion<string>().HasMaxLength(20);
+                .HasConversion(new ValueConverter<PaymentStatus, string>(
+                    v => v.ToString(),
+                    v => ParsePaymentStatus(v))).HasMaxLength(20);
             builder.Entity<Payment>().Property(p => p.Method)
-                .HasConversion<string>().HasMaxLength(20);
+                .HasConversion(new ValueConverter<PaymentMethod, string>(
+                    v => v == PaymentMethod.EWallet ? "E-Wallet" : v.ToString(),
+                    v => ParsePaymentMethod(v))).HasMaxLength(20);
             builder.Entity<Notification>().Property(n => n.Type)
                 .HasConversion<string>().HasMaxLength(20);
 
@@ -117,6 +122,45 @@ namespace restaurant.Data
 
             // Seed data is applied via SQL/customer_tables_and_seed.sql
             // so we do not conflict with Admin's MenuCategoryId schema.
+        }
+
+        // Shared Azure DB may contain Staff/Admin spellings that don't match
+        // our enum names exactly — map them safely instead of crashing Orders.
+        private static PaymentMethod ParsePaymentMethod(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return PaymentMethod.Cash;
+
+            return value.Trim().ToLowerInvariant() switch
+            {
+                "cash" => PaymentMethod.Cash,
+                "card" => PaymentMethod.Card,
+                "online" => PaymentMethod.Online,
+                "e-wallet" or "ewallet" or "e_wallet" => PaymentMethod.EWallet,
+                // Older rows accidentally stored a status in the Method column
+                "pending" or "cancelled" or "canceled" => PaymentMethod.Online,
+                _ => Enum.TryParse<PaymentMethod>(value, true, out var parsed)
+                    ? parsed
+                    : PaymentMethod.Online
+            };
+        }
+
+        private static PaymentStatus ParsePaymentStatus(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return PaymentStatus.Pending;
+
+            return value.Trim().ToLowerInvariant() switch
+            {
+                "pending" => PaymentStatus.Pending,
+                "paid" => PaymentStatus.Paid,
+                "refunded" => PaymentStatus.Refunded,
+                "failed" => PaymentStatus.Failed,
+                "cancelled" or "canceled" => PaymentStatus.Cancelled,
+                _ => Enum.TryParse<PaymentStatus>(value, true, out var parsed)
+                    ? parsed
+                    : PaymentStatus.Pending
+            };
         }
     }
 }

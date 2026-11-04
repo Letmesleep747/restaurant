@@ -23,14 +23,18 @@
         Pending = 0,
         Paid = 1,
         Refunded = 2,
-        Failed = 3
+        Failed = 3,
+        // Used by Staff/Admin billing flows in the shared Azure DB
+        Cancelled = 4
     }
 
     public enum PaymentMethod
     {
         Cash = 0,
         Card = 1,
-        Online = 2
+        Online = 2,
+        // Accept Staff/Admin values stored as E-Wallet / EWallet
+        EWallet = 3
     }
 
     public enum NotificationType
