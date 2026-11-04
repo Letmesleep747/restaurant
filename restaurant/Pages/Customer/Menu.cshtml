@@ -2,54 +2,118 @@
 @model restaurant.Pages.Customer.MenuModel
 @{
     ViewData["Title"] = "Menu";
+    var totalCount = Model.Items.Count;
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1>Our Menu</h1>
-    <a class="btn btn-outline-primary" asp-page="/Customer/Orders/Checkout">
-        View Cart <span class="badge text-bg-primary" id="cart-count">0</span>
+<div class="page-heading d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+    <div>
+        <span class="eyebrow">DIGITAL MENU</span>
+        <h1 class="mt-2 mb-1">Our Menu</h1>
+        <p class="mb-0">
+            Browse by category, pick what you want, then add it to your cart.
+        </p>
+    </div>
+    <a class="btn btn-primary" asp-page="/Customer/Orders/Checkout">
+        View Cart <span class="badge text-bg-light text-dark ms-1" id="cart-count">0</span>
     </a>
 </div>
 
-<div class="mb-3">
-    <a class="btn btn-sm @(string.IsNullOrEmpty(Model.CategoryFilter) ? "btn-primary" : "btn-outline-primary")"
-       asp-page="/Customer/Menu">All</a>
+<nav class="menu-filter-bar mb-4" aria-label="Menu categories">
+    <a class="menu-filter-chip @(string.IsNullOrEmpty(Model.CategoryFilter) ? "is-active" : "")"
+       asp-page="/Customer/Menu">
+        All
+        <span class="menu-filter-count">@totalCount</span>
+    </a>
     @foreach (var cat in Model.Categories)
     {
-        <a class="btn btn-sm @(Model.CategoryFilter == cat ? "btn-primary" : "btn-outline-primary")"
-           asp-page="/Customer/Menu" asp-route-CategoryFilter="@cat">@cat</a>
+        var count = Model.CategoryCounts.TryGetValue(cat, out var c) ? c : 0;
+        <a class="menu-filter-chip @(string.Equals(Model.CategoryFilter, cat, StringComparison.OrdinalIgnoreCase) ? "is-active" : "")"
+           asp-page="/Customer/Menu"
+           asp-route-CategoryFilter="@cat">
+            @cat
+            <span class="menu-filter-count">@count</span>
+        </a>
     }
-</div>
+</nav>
 
-<div class="row row-cols-1 row-cols-md-3 g-4">
-    @foreach (var item in Model.Items)
-    {
-        <div class="col">
-            <div class="card h-100 shadow-sm">
-                @if (!string.IsNullOrEmpty(item.ImageUrl))
-                {
-                    <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" style="height:160px;object-fit:cover;">
-                }
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">@item.Name</h5>
-                    <p class="card-text text-muted small">@item.Description</p>
-                    <p class="fw-bold">@item.Price.ToString("C")</p>
-                    <div class="mt-auto d-flex gap-2">
-                        <input type="number" min="1" value="1" class="form-control form-control-sm qty-input" style="width:70px" data-id="@item.Id" />
-                        <button type="button" class="btn btn-sm btn-success add-to-cart-btn"
-                                data-id="@item.Id" data-name="@item.Name" data-price="@item.Price">
-                            Add to Cart
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
-</div>
-
-@if (!Model.Items.Any())
+@if (!Model.Groups.Any())
 {
-    <p class="text-muted mt-4">No menu items are available right now.</p>
+    <div class="card shadow-sm">
+        <div class="card-body text-center py-5">
+            <p class="text-muted mb-3">No menu items are available in this category right now.</p>
+            <a class="btn btn-outline-primary" asp-page="/Customer/Menu">Show full menu</a>
+        </div>
+    </div>
+}
+else
+{
+    @foreach (var group in Model.Groups)
+    {
+        <section class="menu-category-section mb-5" id="cat-@group.Category.Replace(" ", "-").ToLowerInvariant()">
+            <div class="menu-category-heading">
+                <div>
+                    <span class="eyebrow">CATEGORY</span>
+                    <h2 class="mt-1 mb-0">@group.Category</h2>
+                </div>
+                <span class="menu-category-meta">@group.Items.Count item@(group.Items.Count == 1 ? "" : "s")</span>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-1">
+                @foreach (var item in group.Items)
+                {
+                    var categoryLabel = string.IsNullOrWhiteSpace(item.Category) ? "Other" : item.Category;
+                    <div class="col">
+                        <article class="card card-hover menu-item-card h-100">
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@item.ImageUrl"
+                                     class="food-image"
+                                     alt="@item.Name"
+                                     loading="lazy" />
+                            }
+                            else
+                            {
+                                <div class="menu-item-fallback" aria-hidden="true">
+                                    <span>@categoryLabel</span>
+                                    <strong>@item.Name</strong>
+                                </div>
+                            }
+
+                            <div class="card-body d-flex flex-column">
+                                <span class="menu-item-tag">@categoryLabel</span>
+                                <h3 class="h5 mt-2 mb-2">@item.Name</h3>
+                                <p class="small flex-grow-1">
+                                    @(string.IsNullOrWhiteSpace(item.Description)
+                                        ? "Ask staff for today's preparation details."
+                                        : item.Description)
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="food-price">@item.Price.ToString("C")</span>
+                                </div>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <label class="visually-hidden" for="qty-@item.Id">Quantity for @item.Name</label>
+                                    <input id="qty-@item.Id"
+                                           type="number"
+                                           min="1"
+                                           value="1"
+                                           class="form-control form-control-sm qty-input"
+                                           style="width:72px"
+                                           data-id="@item.Id" />
+                                    <button type="button"
+                                            class="btn btn-primary btn-sm flex-grow-1 add-to-cart-btn"
+                                            data-id="@item.Id"
+                                            data-name="@item.Name"
+                                            data-price="@item.Price">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                }
+            </div>
+        </section>
+    }
 }
 
 @section Scripts {
