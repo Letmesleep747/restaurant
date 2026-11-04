@@ -1,0 +1,97 @@
+@page
+@model restaurant.Pages.Customer.ActivityModel
+@{
+    ViewData["Title"] = "My activity";
+}
+
+<div class="page-heading mb-4">
+    <span class="eyebrow">YOUR ACCOUNT</span>
+    <h1 class="mt-2 mb-1">Welcome back, @Model.FullName</h1>
+    <p class="text-muted mb-0">Track your orders first, then reservations and updates.</p>
+</div>
+
+<div class="row g-3 my-2">
+    <div class="col-md-4">
+        <div class="card text-bg-success shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title">Active Orders</h6>
+                <p class="display-6 mb-0">@Model.ActiveOrderCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-primary shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title">Upcoming Reservations</h6>
+                <p class="display-6 mb-0">@Model.UpcomingReservationCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-warning shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title">Unread Notifications</h6>
+                <p class="display-6 mb-0">@Model.UnreadNotificationCount</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-2">
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Recent Orders</span>
+                <a class="btn btn-sm btn-primary" asp-page="/Customer/Menu">Order from menu</a>
+            </div>
+            <ul class="list-group list-group-flush">
+                @if (!Model.RecentOrders.Any())
+                {
+                    <li class="list-group-item text-muted">No orders yet. Browse the menu to get started.</li>
+                }
+                @foreach (var o in Model.RecentOrders)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>
+                            <a asp-page="/Customer/Orders/Details" asp-route-id="@o.Id">Order #@o.Id</a>
+                            &middot; @o.OrderDate.ToString("dd MMM yyyy HH:mm")
+                            &middot; @o.TotalAmount.ToString("C")
+                        </span>
+                        <span class="badge text-bg-info">@o.Status</span>
+                    </li>
+                }
+            </ul>
+            <div class="card-footer text-end">
+                <a asp-page="/Customer/Orders/Index">View all orders &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Upcoming Reservations</span>
+                <a class="btn btn-sm btn-outline-primary" asp-page="/Customer/Reservations/Create">Book a table</a>
+            </div>
+            <ul class="list-group list-group-flush">
+                @if (!Model.UpcomingReservations.Any())
+                {
+                    <li class="list-group-item text-muted">No upcoming reservations.</li>
+                }
+                @foreach (var r in Model.UpcomingReservations)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>
+                            @r.ReservationDate.ToString("dd MMM yyyy") at @r.StartTime.ToString(@"hh\:mm")
+                            &middot; Table @(r.Table?.TableNumber ?? "-") &middot; @r.PartySize guests
+                        </span>
+                        <span class="badge text-bg-secondary">@r.Status</span>
+                    </li>
+                }
+            </ul>
+            <div class="card-footer text-end">
+                <a asp-page="/Customer/Reservations/Index">View all reservations &rarr;</a>
+            </div>
+        </div>
+    </div>
+</div>

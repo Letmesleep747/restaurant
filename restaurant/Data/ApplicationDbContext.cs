@@ -22,6 +22,8 @@ namespace restaurant.Data
         // Shared with Admin Azure schema (mapped below)
         public DbSet<MenuItem> MenuItems { get; set; } = null!;
         public DbSet<DiningTable> DiningTables { get; set; } = null!;
+        public DbSet<Announcement> Announcements { get; set; } = null!;
+        public DbSet<Promotion> Promotions { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -36,6 +38,16 @@ namespace restaurant.Data
             });
 
             builder.Entity<MenuItem>().ToTable("MenuItems");
+            builder.Entity<Announcement>().ToTable("Announcements");
+            builder.Entity<Promotion>(e =>
+            {
+                e.ToTable("Promotions");
+                e.Property(p => p.DiscountValue).HasColumnType("decimal(10,2)");
+            });
+
+            builder.Entity<OrderItem>()
+                .Property(oi => oi.UnitPrice)
+                .HasColumnType("decimal(8,2)");
 
             builder.Entity<Reservation>().Property(r => r.Status)
                 .HasConversion<string>().HasMaxLength(20);

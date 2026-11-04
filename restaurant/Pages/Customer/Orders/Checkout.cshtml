@@ -22,21 +22,21 @@
 
 <form method="post" id="place-order-form" class="card shadow-sm">
     <div class="card-body">
-        @if (Model.UpcomingReservations.Any())
-        {
-            <div class="mb-3">
-                <label class="form-label">Link to a reservation (optional, for dine-in orders)</label>
-                <select asp-for="ReservationId" class="form-select">
-                    <option value="">-- Takeaway / not linked --</option>
-                    @foreach (var r in Model.UpcomingReservations)
-                    {
-                        <option value="@r.Id">
-                            @r.ReservationDate.ToString("dd MMM") at @r.StartTime.ToString(@"hh\:mm") &middot; @r.PartySize guests
-                        </option>
-                    }
-                </select>
+        <div class="mb-3">
+            <label class="form-label">Dining option</label>
+            <select asp-for="ReservationId" class="form-select">
+                <option value="">Takeaway / no table booking</option>
+                @foreach (var r in Model.UpcomingReservations)
+                {
+                    <option value="@r.Id">
+                        Dine-in: @r.ReservationDate.ToString("dd MMM") at @r.StartTime.ToString(@"hh\:mm") &middot; @r.PartySize guests
+                    </option>
+                }
+            </select>
+            <div class="form-text">
+                Ordering comes first. Link a reservation only if you already booked a table.
             </div>
-        }
+        </div>
 
         <div class="mb-3">
             <label asp-for="Notes" class="form-label">Special instructions (optional)</label>

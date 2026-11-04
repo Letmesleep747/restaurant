@@ -17,8 +17,8 @@
                 </h1>
 
                 <p class="mb-4">
-                    Discover delicious dishes, reserve your favourite table,
-                    and enjoy a dining experience made for you.
+                    Start with our menu, order online, then book a table
+                    if you are dining in.
                 </p>
 
                 <div class="d-flex flex-wrap gap-3">
@@ -28,8 +28,8 @@
                     </a>
 
                     <a class="btn btn-outline-light btn-lg"
-                       asp-page="/Customer/Reservations/Index">
-                        Book a table
+                       asp-page="/Account/Login">
+                        Sign in to order
                     </a>
                 </div>
 
@@ -196,21 +196,21 @@
     <div class="card">
         <div class="card-body p-4 p-lg-5 text-center">
             <span class="eyebrow">YOUR NEXT GREAT MEAL</span>
-            <h2 class="mt-2">Your table is waiting.</h2>
+            <h2 class="mt-2">Hungry? Start with the menu.</h2>
             <p class="mx-auto" style="max-width: 580px;">
-                Plan your next visit and manage your bookings
-                through our convenient online reservation system.
+                Browse dishes and place an order online. Already have a
+                booking? You can link dine-in orders to your reservation at checkout.
             </p>
 
             <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
                 <a class="btn btn-primary btn-lg"
-                   asp-page="/Customer/Reservations/Index">
-                    Reserve a table
+                   asp-page="/Customer/Menu">
+                    Browse menu
                 </a>
 
                 <a class="btn btn-outline-primary btn-lg"
-                   asp-page="/Account/Register">
-                    Join Dine &amp; Dash
+                   asp-page="/Customer/Reservations/Create">
+                    Book a table
                 </a>
             </div>
         </div>
