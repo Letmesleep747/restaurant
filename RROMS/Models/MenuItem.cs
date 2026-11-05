@@ -21,6 +21,9 @@ namespace RROMS.Models
 
         public bool IsAvailable { get; set; } = true;
 
+        [StringLength(1000)]
+        public string? ImageUrl { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public MenuCategory? MenuCategory { get; set; }

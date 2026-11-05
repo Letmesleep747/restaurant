@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -11,13 +10,9 @@ namespace RROMS.Pages.Admin.Menu.Items
     {
         private readonly ApplicationDbContext _context;
 
-        public IndexModel(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        public IndexModel(ApplicationDbContext context) { _context = context; }
 
-        public IList<MenuItem> Items { get; set; }
-            = new List<MenuItem>();
+        public IList<MenuItem> Items { get; set; } = new List<MenuItem>();
 
         [TempData]
         public string? StatusMessage { get; set; }
@@ -34,20 +29,12 @@ namespace RROMS.Pages.Admin.Menu.Items
         public async Task<IActionResult> OnPostToggleAvailabilityAsync(int id)
         {
             var item = await _context.MenuItems.FindAsync(id);
-
-            if (item == null)
-            {
-                return NotFound();
-            }
+            if (item == null) return NotFound();
 
             item.IsAvailable = !item.IsAvailable;
-
             await _context.SaveChangesAsync();
 
-            StatusMessage = item.IsAvailable
-                ? "Menu item is now available."
-                : "Menu item is now unavailable.";
-
+            StatusMessage = item.IsAvailable ? "Menu item is now available." : "Menu item is now unavailable.";
             return RedirectToPage();
         }
     }

@@ -528,3 +528,39 @@ body.sidebar-collapsed .admin-main {
         flex: 1;
     }
 }
+
+.menu-item-thumbnail {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background: #f8f9fa;
+}
+
+.menu-item-thumbnail-placeholder {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: 1px dashed #cbd5e1;
+    background: #f8f9fa;
+    color: #94a3b8;
+    font-size: 22px;
+}
+
+.menu-image-preview {
+    display: block;
+    width: 180px;
+    height: 140px;
+    object-fit: cover;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #f8f9fa;
+}
+
+.menu-item-description {
+    max-width: 280px;
+}
