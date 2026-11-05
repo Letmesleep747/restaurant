@@ -93,6 +93,8 @@ namespace restaurant.Pages.Customer.Orders
                 payment.TransactionDate = DateTime.UtcNow;
             }
 
+            order.Status = OrderStatus.Completed;
+
             await _db.SaveChangesAsync();
             await _notifications.NotifyAsync(userId, "Payment confirmed",
                 $"Payment of {order.TotalAmount:C} for order #{order.Id} was successful.",
