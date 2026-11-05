@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +17,34 @@ namespace RROMS.Pages.Staff
 
         public void OnGet()
         {
+        }
+
+        // Treat Customer module's "Placed" status as "Pending"
+        // for Staff-side order management.
+        private static bool IsPendingStatus(string? status)
+        {
+            return string.Equals(
+                       status,
+                       "Pending",
+                       StringComparison.OrdinalIgnoreCase)
+                   ||
+                   string.Equals(
+                       status,
+                       "Placed",
+                       StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsTerminalStatus(string? status)
+        {
+            return string.Equals(
+                       status,
+                       "Completed",
+                       StringComparison.OrdinalIgnoreCase)
+                   ||
+                   string.Equals(
+                       status,
+                       "Cancelled",
+                       StringComparison.OrdinalIgnoreCase);
         }
 
         // GET: /Staff/Order?handler=MenuItems
@@ -64,7 +91,13 @@ namespace RROMS.Pages.Staff
                     ? "Walk-in"
                     : o.Reservation?.RestaurantTable?.TableNumber
                         ?? "Not Assigned",
-                status = o.Status,
+
+                // Staff sees "Placed" as "Pending".
+                // The actual database value remains unchanged.
+                status = IsPendingStatus(o.Status)
+                    ? "Pending"
+                    : o.Status,
+
                 orderDate = o.OrderDate,
                 total = o.TotalAmount,
                 items = o.OrderItems.Select(i => new
@@ -135,8 +168,9 @@ namespace RROMS.Pages.Staff
                 });
             }
 
-            // All newly created or edited orders must remain Pending.
-            // Served and Completed are handled by their respective workflows.
+            // Staff-created and Staff-edited orders use Pending.
+            // Customer-created Placed orders are treated as Pending
+            // when Staff edits them.
             const string status = "Pending";
 
             // Find reservation, if this is a reservation order.
@@ -161,8 +195,6 @@ namespace RROMS.Pages.Staff
             }
 
             // Resolve CustomerId.
-            // Reservation orders use the reservation's customer.
-            // Walk-in orders must match an existing registered customer.
             string customerId;
 
             if (reservation != null)
@@ -285,12 +317,13 @@ namespace RROMS.Pages.Staff
                     });
                 }
 
-                if (order.Status != "Pending")
+                // Accept both Pending and Placed for Staff editing.
+                if (!IsPendingStatus(order.Status))
                 {
                     return BadRequest(new
                     {
                         success = false,
-                        message = "Only pending orders can be edited."
+                        message = "Only pending or placed orders can be edited."
                     });
                 }
 
@@ -389,7 +422,6 @@ namespace RROMS.Pages.Staff
         }
 
         // POST: /Staff/Order?handler=UpdateStatus
-
         public async Task<IActionResult> OnPostUpdateStatusAsync(
             [FromBody] StatusRequest request)
         {
@@ -415,8 +447,7 @@ namespace RROMS.Pages.Staff
                 });
             }
 
-            if (order.Status == "Completed" ||
-                order.Status == "Cancelled")
+            if (IsTerminalStatus(order.Status))
             {
                 return BadRequest(new
                 {
@@ -426,11 +457,17 @@ namespace RROMS.Pages.Staff
             }
 
             bool isValidNextStatus =
-                order.Status == "Pending" &&
-                request.Status == "Served";
+                IsPendingStatus(order.Status) &&
+                string.Equals(
+                    request.Status,
+                    "Served",
+                    StringComparison.OrdinalIgnoreCase);
 
             bool isCancellation =
-                request.Status == "Cancelled";
+                string.Equals(
+                    request.Status,
+                    "Cancelled",
+                    StringComparison.OrdinalIgnoreCase);
 
             if (!isValidNextStatus && !isCancellation)
             {
@@ -446,7 +483,9 @@ namespace RROMS.Pages.Staff
 
             try
             {
-                order.Status = request.Status;
+                order.Status = isCancellation
+                    ? "Cancelled"
+                    : "Served";
 
                 // Cancel the associated unpaid payment when
                 // the order is cancelled.
@@ -495,7 +534,6 @@ namespace RROMS.Pages.Staff
                 });
             }
         }
-
 
         // Request models used by the frontend.
         public class OrderRequest

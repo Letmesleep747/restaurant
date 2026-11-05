@@ -19,7 +19,7 @@ namespace RROMS.Models
         public DateTime OrderDate { get; set; } = DateTime.Now;
 
         [Required]
-        public string Status { get; set; } = "Preparing";
+        public string Status { get; set; } = "Pending";
 
         [Column(TypeName = "decimal(10,2)")]
         public decimal TotalAmount { get; set; }
