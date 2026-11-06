@@ -127,12 +127,7 @@ namespace restaurant.Data
                 .HasForeignKey(f => f.ReservationId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            // Seed data is applied via SQL/customer_tables_and_seed.sql
-            // so we do not conflict with Admin's MenuCategoryId schema.
         }
-
-        // Shared Azure DB may contain Staff/Admin spellings that don't match
-        // our enum names exactly — map them safely instead of crashing Orders.
         private static PaymentMethod ParsePaymentMethod(string? value)
         {
             if (string.IsNullOrWhiteSpace(value))
