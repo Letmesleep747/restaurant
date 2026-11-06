@@ -6,37 +6,44 @@
 
 <h1>New Reservation</h1>
 
-<div class="card shadow-sm" style="max-width: 600px;">
-    <div class="card-body">
-        <form method="post">
-            <div asp-validation-summary="All" class="text-danger"></div>
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card shadow-sm" style="max-width: 600px;">
+            <div class="card-body">
+                <form method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
 
-            <div class="mb-3">
-                <label asp-for="Input.ReservationDate" class="form-label"></label>
-                <input asp-for="Input.ReservationDate" type="date" class="form-control" />
-                <span asp-validation-for="Input.ReservationDate" class="text-danger"></span>
+                    <div class="mb-3">
+                        <label asp-for="Input.ReservationDate" class="form-label"></label>
+                        <input asp-for="Input.ReservationDate" type="date" class="form-control" />
+                        <span asp-validation-for="Input.ReservationDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.StartTime" class="form-label"></label>
+                        <input asp-for="Input.StartTime" type="time" class="form-control" />
+                        <span asp-validation-for="Input.StartTime" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.PartySize" class="form-label"></label>
+                        <input asp-for="Input.PartySize" type="number" min="1" max="20" class="form-control" />
+                        <span asp-validation-for="Input.PartySize" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.SpecialRequests" class="form-label"></label>
+                        <textarea asp-for="Input.SpecialRequests" class="form-control" rows="2" placeholder="e.g. window seat, birthday, allergy"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Check Availability &amp; Book</button>
+                    <a class="btn btn-outline-secondary" asp-page="/Customer/Reservations/Index">Cancel</a>
+                </form>
             </div>
-
-            <div class="mb-3">
-                <label asp-for="Input.StartTime" class="form-label"></label>
-                <input asp-for="Input.StartTime" type="time" class="form-control" />
-                <span asp-validation-for="Input.StartTime" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Input.PartySize" class="form-label"></label>
-                <input asp-for="Input.PartySize" type="number" min="1" max="20" class="form-control" />
-                <span asp-validation-for="Input.PartySize" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Input.SpecialRequests" class="form-label"></label>
-                <textarea asp-for="Input.SpecialRequests" class="form-control" rows="2" placeholder="e.g. window seat, birthday, allergy"></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Check Availability &amp; Book</button>
-            <a class="btn btn-outline-secondary" asp-page="/Customer/Reservations/Index">Cancel</a>
-        </form>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        @await Component.InvokeAsync("OperatingHours")
     </div>
 </div>
 

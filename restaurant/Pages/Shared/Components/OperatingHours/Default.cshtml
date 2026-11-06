@@ -1,0 +1,54 @@
+﻿@model restaurant.Components.OperatingHoursViewModel
+@{
+    var snap = Model.Snapshot;
+    var badgeClass = snap.Status.IsOpen ? "text-bg-success" : "text-bg-secondary";
+}
+
+@if (snap.Status.IsConfigured)
+{
+    if (Model.Compact)
+    {
+        <p class="small mb-3" aria-label="Opening status">
+            <span class="badge @badgeClass">@snap.Status.Headline</span>
+            @if (!string.IsNullOrEmpty(snap.Status.Detail))
+            {
+                <span class="text-muted ms-1">@snap.Status.Detail</span>
+            }
+        </p>
+    }
+    else
+    {
+        <div class="card h-100" aria-label="Opening hours">
+            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                    <h5 class="mb-0">Opening hours</h5>
+                    <span class="badge @badgeClass">@snap.Status.Text</span>
+                </div>
+
+                <table class="table table-sm align-middle mb-0">
+                    <tbody>
+                        @foreach (var h in snap.Week)
+                        {
+                            var isToday = h.Day == snap.Today;
+                            var hasTimes = !h.IsClosed && h.OpeningTime.HasValue && h.ClosingTime.HasValue;
+                            var hoursText = hasTimes
+                                ? h.OpeningTime!.Value.ToString(@"hh\:mm") + " \u2013 " + h.ClosingTime!.Value.ToString(@"hh\:mm")
+                                : "Closed";
+
+                            <tr class="@(isToday ? "fw-semibold table-active" : "")">
+                                <td>
+                                    @h.Day
+                                    @if (isToday)
+                                    {
+                                        <span class="text-muted small">(today)</span>
+                                    }
+                                </td>
+                                <td class="text-end @(hasTimes ? "" : "text-muted")">@hoursText</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+}

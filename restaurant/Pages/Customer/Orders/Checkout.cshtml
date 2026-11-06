@@ -6,6 +6,13 @@
 
 <h1>Checkout</h1>
 
+@if (Model.ClosedMessage != null)
+{
+    <div class="alert alert-warning" role="alert">
+        @Model.ClosedMessage You can keep your cart and come back when we open.
+    </div>
+}
+
 <div asp-validation-summary="All" class="text-danger"></div>
 
 <div class="card shadow-sm mb-4">
@@ -45,7 +52,7 @@
 
         <div id="cart-hidden-inputs"></div>
 
-        <button type="submit" class="btn btn-success">Place Order</button>
+        <button type="submit" class="btn btn-success" disabled="@(Model.ClosedMessage != null)">Place Order</button>
         <a class="btn btn-outline-secondary" asp-page="/Customer/Menu">Back to Menu</a>
     </div>
 </form>

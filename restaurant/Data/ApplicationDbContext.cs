@@ -25,6 +25,7 @@ namespace restaurant.Data
         public DbSet<DiningTable> DiningTables { get; set; } = null!;
         public DbSet<Announcement> Announcements { get; set; } = null!;
         public DbSet<Promotion> Promotions { get; set; } = null!;
+        public DbSet<OperatingHour> OperatingHours { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -39,6 +40,12 @@ namespace restaurant.Data
             });
 
             builder.Entity<MenuItem>().ToTable("MenuItems");
+            builder.Entity<OperatingHour>(e =>
+            {
+                e.ToTable("OperatingHours");
+                e.HasKey(o => o.OperatingHourId);
+                e.HasIndex(o => o.Day).IsUnique(); // one row per weekday, as in Admin
+            });
             builder.Entity<Announcement>().ToTable("Announcements");
             builder.Entity<Promotion>(e =>
             {

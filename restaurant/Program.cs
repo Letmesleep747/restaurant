@@ -16,6 +16,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Customer services
 builder.Services.AddScoped<IReservationAvailabilityService, ReservationAvailabilityService>();
+builder.Services.AddScoped<IOperatingHoursService, OperatingHoursService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
 // Identity (use AddIdentity so role support is explicit and no extra UI package is required)

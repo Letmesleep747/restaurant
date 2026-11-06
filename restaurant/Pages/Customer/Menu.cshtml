@@ -18,6 +18,8 @@
     </a>
 </div>
 
+@await Component.InvokeAsync("OperatingHours", new { compact = true })
+
 <nav class="menu-filter-bar mb-4" aria-label="Menu categories">
     <a class="menu-filter-chip @(string.IsNullOrEmpty(Model.CategoryFilter) ? "is-active" : "")"
        asp-page="/Customer/Menu">

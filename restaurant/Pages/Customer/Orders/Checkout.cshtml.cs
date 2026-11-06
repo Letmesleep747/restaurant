@@ -16,13 +16,15 @@ namespace restaurant.Pages.Customer.Orders
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly INotificationService _notifications;
+        private readonly IOperatingHoursService _hours;
 
         public CheckoutModel(ApplicationDbContext db, UserManager<ApplicationUser> userManager,
-            INotificationService notifications)
+            INotificationService notifications, IOperatingHoursService hours)
         {
             _db = db;
             _userManager = userManager;
             _notifications = notifications;
+            _hours = hours;
         }
 
         [BindProperty]
@@ -36,6 +38,9 @@ namespace restaurant.Pages.Customer.Orders
 
         public List<Reservation> UpcomingReservations { get; set; } = new();
 
+        // Set when the restaurant is closed and new orders are not being accepted.
+        public string? ClosedMessage { get; set; }
+
         public class CartItemInput
         {
             public int MenuItemId { get; set; }
@@ -44,6 +49,8 @@ namespace restaurant.Pages.Customer.Orders
 
         public async Task OnGetAsync()
         {
+            ClosedMessage = await _hours.GetOrderingBlockReasonAsync();
+
             var userId = _userManager.GetUserId(User);
             UpcomingReservations = await _db.Reservations
                 .Where(r => r.CustomerId == userId
@@ -57,6 +64,14 @@ namespace restaurant.Pages.Customer.Orders
         {
             var userId = _userManager.GetUserId(User);
             if (userId == null) return Challenge();
+
+            // Re-check on the server: the page may have been opened before closing time.
+            // (OnGetAsync sets ClosedMessage, which the page shows as a banner.)
+            if (await _hours.GetOrderingBlockReasonAsync() != null)
+            {
+                await OnGetAsync();
+                return Page();
+            }
 
             if (CartItems == null || CartItems.Count == 0)
             {

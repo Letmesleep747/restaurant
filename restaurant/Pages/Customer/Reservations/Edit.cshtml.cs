@@ -18,14 +18,17 @@ namespace restaurant.Pages.Customer.Reservations
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IReservationAvailabilityService _availability;
         private readonly INotificationService _notifications;
+        private readonly IOperatingHoursService _hours;
 
         public EditModel(ApplicationDbContext db, UserManager<ApplicationUser> userManager,
-            IReservationAvailabilityService availability, INotificationService notifications)
+            IReservationAvailabilityService availability, INotificationService notifications,
+            IOperatingHoursService hours)
         {
             _db = db;
             _userManager = userManager;
             _availability = availability;
             _notifications = notifications;
+            _hours = hours;
         }
 
         [BindProperty]
@@ -91,6 +94,15 @@ namespace restaurant.Pages.Customer.Reservations
 
             if (Input.ReservationDate.Date < DateTime.Today)
                 ModelState.AddModelError("Input.ReservationDate", "Reservation date cannot be in the past.");
+
+            // Must fall inside the opening hours the admin configured.
+            if (ModelState.IsValid)
+            {
+                var hoursError = await _hours.ValidateReservationSlotAsync(
+                    Input.ReservationDate, Input.StartTime, reservation.DurationMinutes);
+                if (hoursError != null)
+                    ModelState.AddModelError(string.Empty, hoursError);
+            }
 
             if (!ModelState.IsValid)
                 return Page();
