@@ -87,6 +87,12 @@ namespace RROMS.Data
                 .Property(m => m.Price)
                 .HasColumnType("decimal(10,2)");
 
+            modelBuilder.Entity<MenuItem>()
+                .Property(m => m.Category)
+                .HasColumnName("Category")
+                .HasMaxLength(50)
+                .IsRequired(false);
+
 
             modelBuilder.Entity<Promotion>()
                 .Property(p => p.DiscountValue)

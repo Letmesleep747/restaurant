@@ -8,8 +8,7 @@ namespace RROMS.Pages.Admin.Users
 {
     public class CreateModel : PageModel
     {
-        private readonly UserManager<ApplicationUser>
-            _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         private static readonly string[] AllowedRoles =
         {
@@ -18,48 +17,48 @@ namespace RROMS.Pages.Admin.Users
             "Customer"
         };
 
-
         public CreateModel(
             UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }
 
-
         [BindProperty]
-        public UserCreateViewModel Input { get; set; }
-            = new();
-
+        public UserCreateViewModel Input { get; set; } = new();
 
         public void OnGet()
         {
         }
 
-
         public async Task<IActionResult> OnPostAsync()
         {
-            Input.Email =
-                Input.Email.Trim();
+            // Normalise the email input.
+            Input.Email = Input.Email?.Trim() ?? string.Empty;
 
+            // Revalidate the model after normalising the email.
+            ModelState.ClearValidationState(nameof(Input));
+            TryValidateModel(Input, nameof(Input));
 
+            // Validate the selected role.
             if (!AllowedRoles.Contains(Input.Role))
             {
                 ModelState.AddModelError(
                     "Input.Role",
-                    "Invalid role selected.");
+                    "Please select a valid user role.");
             }
 
-
+            // Stop account creation if validation fails.
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
+            // Normalise the full name.
+            Input.FullName = Input.FullName.Trim();
 
+            // Check whether the email is already registered.
             var existingUser =
-                await _userManager.FindByEmailAsync(
-                    Input.Email);
-
+                await _userManager.FindByEmailAsync(Input.Email);
 
             if (existingUser != null)
             {
@@ -70,34 +69,28 @@ namespace RROMS.Pages.Admin.Users
                 return Page();
             }
 
-
+            // Create the new user.
             var user = new ApplicationUser
             {
                 UserName = Input.Email,
-
                 Email = Input.Email,
-
-                FullName = Input.FullName.Trim(),
+                FullName = Input.FullName,
 
                 PhoneNumber =
-                    string.IsNullOrWhiteSpace(
-                        Input.PhoneNumber)
+                    string.IsNullOrWhiteSpace(Input.PhoneNumber)
                         ? null
                         : Input.PhoneNumber.Trim(),
 
                 EmailConfirmed = true,
-
                 IsActive = true,
-
                 CreatedAt = DateTime.UtcNow
             };
 
-
+            // Create the account using ASP.NET Core Identity.
             var createResult =
                 await _userManager.CreateAsync(
                     user,
                     Input.Password);
-
 
             if (!createResult.Succeeded)
             {
@@ -111,15 +104,15 @@ namespace RROMS.Pages.Admin.Users
                 return Page();
             }
 
-
+            // Assign the selected role.
             var roleResult =
                 await _userManager.AddToRoleAsync(
                     user,
                     Input.Role);
 
-
             if (!roleResult.Succeeded)
             {
+                // Remove the account if role assignment fails.
                 await _userManager.DeleteAsync(user);
 
                 foreach (var error in roleResult.Errors)
@@ -132,10 +125,9 @@ namespace RROMS.Pages.Admin.Users
                 return Page();
             }
 
-
+            // Display success message.
             TempData["SuccessMessage"] =
                 $"{user.FullName} has been created successfully.";
-
 
             return RedirectToPage("./Index");
         }

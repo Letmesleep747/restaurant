@@ -100,7 +100,7 @@ namespace RROMS.Pages.Admin.Users
             Input.Id = id;
 
             Input.Email =
-                Input.Email.Trim();
+                Input.Email?.Trim() ?? string.Empty;
 
 
             var currentUserId =

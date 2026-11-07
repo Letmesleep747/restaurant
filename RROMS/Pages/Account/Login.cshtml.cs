@@ -49,7 +49,7 @@ namespace RROMS.Pages.Account
 
 
             var email =
-                Input.Email.Trim();
+                Input.Email?.Trim() ?? string.Empty;
 
 
             var user =

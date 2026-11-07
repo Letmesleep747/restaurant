@@ -1,4 +1,3 @@
-﻿
 @{
     var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? "";
 
@@ -136,8 +135,8 @@
                     <span>Order Monitoring</span>
                 </a>
 
-                <a asp-page="/Admin/Payments/Index" 
-                    class="sidebar-link">
+                <a asp-page="/Admin/Payments/Index"
+                   class="sidebar-link @ActiveClass("/Admin/Payments/Index")">
                     <i class="bi bi-credit-card"></i>
                     <span>Payments</span>
                 </a>
@@ -216,7 +215,8 @@
                     <!-- Logout -->
                     <form method="post"
                           asp-page="/Account/Logout"
-                          class="ms-2">
+                          class="ms-2"
+                          data-turbo="false">
                         <button type="submit"
                                 class="btn btn-sm btn-outline-secondary">
                             <i class="bi bi-box-arrow-right"></i>
