@@ -5,53 +5,61 @@
     ViewData["Title"] = "Edit Menu Category";
 }
 
-<div class="container py-4" style="max-width: 800px;">
-    <div class="mb-4">
-        <a asp-page="./Index" class="text-decoration-none">
+<div class="page-heading">
+    <div>
+        <a asp-page="./Index" class="text-decoration-none small mb-2 d-inline-block">
             <i class="bi bi-arrow-left"></i> Back to Categories
         </a>
-        <h2 class="fw-bold mt-3">Edit Menu Category</h2>
-        <p class="text-muted">Update category information and status.</p>
+        <h2>Edit Menu Category</h2>
+        <p>Update the category name, description and status.</p>
     </div>
+</div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-4">
-            <form method="post">
+<div class="row justify-content-center">
+    <div class="col-lg-9 col-xl-8">
+        <div class="content-card restaurant-edit-card menu-category-edit-card">
+            <div class="restaurant-form-heading">
+                <div class="restaurant-form-icon">
+                    <i class="bi bi-tags"></i>
+                </div>
+                <div>
+                    <h5>Category Details</h5>
+                    <p>Maintain the information displayed for this menu category</p>
+                </div>
+            </div>
+
+            <form method="post" class="restaurant-edit-form menu-category-edit-form">
                 <input type="hidden" asp-for="Category.Id" />
                 <input type="hidden" asp-for="Category.CreatedAt" />
 
-                <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3"></div>
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
 
-                <div class="mb-3">
-                    <label asp-for="Category.Name"
-                           class="form-label">Category Name</label>
-                    <input asp-for="Category.Name" class="form-control" />
-                    <span asp-validation-for="Category.Name"
-                          class="text-danger"></span>
+                <div class="mb-4">
+                    <label asp-for="Category.Name" class="form-label">Category Name</label>
+                    <input asp-for="Category.Name" class="form-control" placeholder="e.g. Main Courses" />
+                    <span asp-validation-for="Category.Name" class="text-danger"></span>
                 </div>
 
-                <div class="mb-3">
-                    <label asp-for="Category.Description"
-                           class="form-label">Description</label>
-                    <textarea asp-for="Category.Description"
-                              class="form-control" rows="3"></textarea>
-                    <span asp-validation-for="Category.Description"
-                          class="text-danger"></span>
+                <div class="mb-4">
+                    <label asp-for="Category.Description" class="form-label">Description</label>
+                    <textarea asp-for="Category.Description" class="form-control" rows="4"
+                              placeholder="Describe this category"></textarea>
+                    <span asp-validation-for="Category.Description" class="text-danger"></span>
                 </div>
 
-                <div class="form-check form-switch mb-4">
-                    <input asp-for="Category.IsActive"
-                           class="form-check-input" />
-                    <label asp-for="Category.IsActive"
-                           class="form-check-label">Active category</label>
+                <div class="restaurant-status-box mb-4">
+                    <div class="form-check form-switch mb-0">
+                        <input asp-for="Category.IsActive" class="form-check-input" />
+                        <label asp-for="Category.IsActive" class="form-check-label">Active category</label>
+                    </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-2">
-                    <a asp-page="./Index"
-                       class="btn btn-outline-secondary">Cancel</a>
+                <div class="d-flex justify-content-end gap-2 restaurant-form-actions">
+                    <a asp-page="./Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-lg"></i> Cancel
+                    </a>
                     <button type="submit" class="btn btn-primary">
-                        Save Changes
+                        <i class="bi bi-check-lg"></i> Save Changes
                     </button>
                 </div>
             </form>

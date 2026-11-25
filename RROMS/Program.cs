@@ -95,6 +95,13 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Map Razor Pages
 app.MapRazorPages();
+
+// Redirect root URL to Admin Login page
+app.MapGet("/", () =>
+{
+    return Results.Redirect("/Account/Login");
+});
 
 app.Run();

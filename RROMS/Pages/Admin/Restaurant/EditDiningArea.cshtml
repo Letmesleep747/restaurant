@@ -18,13 +18,23 @@
 </div>
 
 
-<div class="row">
+<div class="row justify-content-center">
 
-    <div class="col-lg-7 col-xl-6">
+    <div class="col-lg-9 col-xl-8">
 
-        <div class="content-card">
+        <div class="content-card dining-area-edit-card">
 
-            <form method="post">
+            <div class="dining-area-form-heading">
+                <div class="dining-area-form-icon">
+                    <i class="bi bi-building-gear"></i>
+                </div>
+                <div>
+                    <h5>Dining Area Details</h5>
+                    <p>Make changes to the dining area information below.</p>
+                </div>
+            </div>
+
+            <form method="post" class="dining-area-edit-form">
 
                 <input asp-for="Id"
                        type="hidden" />
@@ -35,7 +45,7 @@
                 </div>
 
 
-                <div class="mb-3">
+                <div class="mb-4">
 
                     <label asp-for="Input.Name"
                            class="form-label">
@@ -51,7 +61,7 @@
                 </div>
 
 
-                <div class="mb-3">
+                <div class="mb-4">
 
                     <label asp-for="Input.Description"
                            class="form-label">
@@ -69,7 +79,9 @@
                 </div>
 
 
-                <div class="form-check form-switch mb-4">
+                <div class="dining-area-status-box mb-4">
+
+                <div class="form-check form-switch mb-0">
 
                     <input asp-for="Input.IsActive"
                            class="form-check-input" />
@@ -81,8 +93,9 @@
 
                 </div>
 
+                </div>
 
-                <div class="d-flex justify-content-end gap-2">
+                <div class="d-flex justify-content-end gap-2 dining-area-form-actions">
 
                     <a asp-page="DiningAreas"
                        class="btn btn-outline-secondary">

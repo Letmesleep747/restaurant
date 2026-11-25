@@ -5,168 +5,86 @@
     ViewData["Title"] = "Edit Table";
 }
 
-
 <div class="page-heading">
-
     <div>
-
         <h2>Edit Restaurant Table</h2>
-
-        <p>
-            Update table information,
-            seating capacity and status.
-        </p>
-
+        <p>Update table information, seating capacity and status.</p>
     </div>
-
 </div>
 
+<div class="row justify-content-center">
+    <div class="col-lg-9 col-xl-8">
+        <div class="content-card restaurant-edit-card">
 
-<div class="row">
-
-    <div class="col-lg-7 col-xl-6">
-
-        <div class="content-card">
-
-            <form method="post">
-
-                <input asp-for="Id"
-                       type="hidden" />
-
-
-                <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3">
+            <div class="restaurant-form-heading">
+                <div class="restaurant-form-icon">
+                    <i class="bi bi-table"></i>
                 </div>
+                <div>
+                    <h5>Table Details</h5>
+                    <p>Manage the dining area, table number, seating capacity and availability</p>
+                </div>
+            </div>
 
+            <form method="post" class="restaurant-edit-form">
+                <input asp-for="Id" type="hidden" />
 
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
 
-                <!-- Dining Area -->
-                <div class="mb-3">
-
-                    <label asp-for="Input.DiningAreaId"
-                           class="form-label">
-                    </label>
-
-
-                    <select asp-for="Input.DiningAreaId"
-                            class="form-select">
-
+                <div class="mb-4">
+                    <label asp-for="Input.DiningAreaId" class="form-label"></label>
+                    <select asp-for="Input.DiningAreaId" class="form-select">
                         @foreach (var area in Model.DiningAreas)
                         {
                             if (area.IsActive)
                             {
-                                <option value="@area.DiningAreaId">
-                                    @area.Name
-                                </option>
+                                <option value="@area.DiningAreaId">@area.Name</option>
                             }
-
                             else
                             {
-                                <option value="@area.DiningAreaId">
-                                    @area.Name (Inactive)
-                                </option>
+                                <option value="@area.DiningAreaId">@area.Name (Inactive)</option>
                             }
                         }
-
                     </select>
-
-
-                    <span asp-validation-for="Input.DiningAreaId"
-                          class="text-danger">
-                    </span>
-
+                    <span asp-validation-for="Input.DiningAreaId" class="text-danger"></span>
                 </div>
 
-
-
-                <!-- Table Number -->
-                <div class="mb-3">
-
-                    <label asp-for="Input.TableNumber"
-                           class="form-label">
-                    </label>
-
-
-                    <input asp-for="Input.TableNumber"
-                           class="form-control" />
-
-
-                    <span asp-validation-for="Input.TableNumber"
-                          class="text-danger">
-                    </span>
-
+                <div class="mb-4">
+                    <label asp-for="Input.TableNumber" class="form-label"></label>
+                    <input asp-for="Input.TableNumber" class="form-control" />
+                    <span asp-validation-for="Input.TableNumber" class="text-danger"></span>
                 </div>
 
-
-
-                <!-- Capacity -->
-                <div class="mb-3">
-
-                    <label asp-for="Input.Capacity"
-                           class="form-label">
-                    </label>
-
-
-                    <input asp-for="Input.Capacity"
-                           type="number"
-                           min="1"
-                           class="form-control" />
-
-
-                    <span asp-validation-for="Input.Capacity"
-                          class="text-danger">
-                    </span>
-
+                <div class="mb-4">
+                    <label asp-for="Input.Capacity" class="form-label"></label>
+                    <input asp-for="Input.Capacity" type="number" min="1" class="form-control" />
+                    <span asp-validation-for="Input.Capacity" class="text-danger"></span>
                 </div>
 
-
-
-                <!-- Active -->
-                <div class="form-check form-switch mb-4">
-
-                    <input asp-for="Input.IsActive"
-                           class="form-check-input" />
-
-
-                    <label asp-for="Input.IsActive"
-                           class="form-check-label">
-
-                        Restaurant table is active
-
-                    </label>
-
+                <div class="restaurant-status-box mb-4">
+                    <div class="form-check form-switch mb-0">
+                        <input asp-for="Input.IsActive" class="form-check-input" />
+                        <label asp-for="Input.IsActive" class="form-check-label">
+                            Restaurant table is active
+                        </label>
+                    </div>
                 </div>
 
-
-
-                <div class="d-flex justify-content-end gap-2">
-
-                    <a asp-page="/Admin/Restaurant/Tables"
-                       class="btn btn-outline-secondary">
-
+                <div class="restaurant-form-actions d-flex justify-content-end gap-2">
+                    <a asp-page="/Admin/Restaurant/Tables" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-lg"></i>
                         Cancel
-
                     </a>
-
-
-                    <button type="submit"
-                            class="btn btn-primary">
-
+                    <button type="submit" class="btn btn-primary">
                         <i class="bi bi-check-lg"></i>
                         Save Changes
-
                     </button>
-
                 </div>
-
             </form>
 
         </div>
-
     </div>
-
 </div>
-
 
 @section Scripts
 {

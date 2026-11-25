@@ -63,11 +63,8 @@ namespace RROMS.Pages.Admin.Menu.Items
             }
             else
             {
-                // Category is obtained from the selected category record.
                 Item.Category = category.Name;
 
-                // Remove the validation error because Category is not
-                // submitted separately by the form.
                 ModelState.Remove("Item.Category");
             }
 

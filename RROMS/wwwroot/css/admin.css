@@ -564,3 +564,319 @@ body.sidebar-collapsed .admin-main {
 .menu-item-description {
     max-width: 280px;
 }
+
+
+/* Dining area action buttons */
+.dining-action-btn {
+    width: 104px;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    white-space: nowrap;
+    padding: 5px 10px;
+}
+
+    .dining-action-btn i {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+
+/* Dining area edit form layout */
+.dining-area-edit-card {
+    padding: 34px 38px;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(31, 41, 55, 0.045);
+}
+
+.dining-area-form-heading {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-bottom: 23px;
+    margin-bottom: 27px;
+    border-bottom: 1px solid #edf0f2;
+}
+
+.dining-area-form-icon {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #eef3f8;
+    color: #34495e;
+    font-size: 21px;
+}
+
+.dining-area-form-heading h5 {
+    margin: 0 0 5px;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.dining-area-form-heading p {
+    margin: 0;
+    color: #77808a;
+    font-size: 13px;
+}
+
+.dining-area-edit-form .form-label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #343a40;
+}
+
+.dining-area-edit-form .form-control {
+    min-height: 44px;
+    padding: 10px 13px;
+    border-color: #dfe3e8;
+    border-radius: 8px;
+}
+
+.dining-area-edit-form textarea.form-control {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.dining-area-edit-form .form-control:focus {
+    border-color: #9aafc4;
+    box-shadow: 0 0 0 3px rgba(52, 73, 94, 0.10);
+}
+
+.dining-area-status-box {
+    padding: 16px 18px;
+    background: #f7f9fb;
+    border: 1px solid #e8edf2;
+    border-radius: 9px;
+}
+
+    .dining-area-status-box .form-check-label {
+        font-weight: 500;
+        color: #343a40;
+    }
+
+.dining-area-form-actions {
+    padding-top: 21px;
+    margin-top: 8px;
+    border-top: 1px solid #edf0f2;
+}
+
+    .dining-area-form-actions .btn {
+        min-width: 120px;
+        min-height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+    }
+
+@media (max-width: 767.98px) {
+    .dining-area-edit-card {
+        padding: 23px 18px;
+    }
+}
+
+
+/* Restaurant table edit form layout */
+.restaurant-edit-card {
+    padding: 34px 38px;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(31, 41, 55, 0.045);
+}
+
+.restaurant-form-heading {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-bottom: 23px;
+    margin-bottom: 27px;
+    border-bottom: 1px solid #edf0f2;
+}
+
+.restaurant-form-icon {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #eef3f8;
+    color: #34495e;
+    font-size: 21px;
+}
+
+.restaurant-form-heading h5 {
+    margin: 0 0 5px;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.restaurant-form-heading p {
+    margin: 0;
+    color: #77808a;
+    font-size: 13px;
+}
+
+.restaurant-edit-form .form-label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #343a40;
+}
+
+.restaurant-edit-form .form-control,
+.restaurant-edit-form .form-select {
+    min-height: 44px;
+    padding: 10px 13px;
+    border-color: #dfe3e8;
+    border-radius: 8px;
+}
+
+    .restaurant-edit-form .form-control:focus,
+    .restaurant-edit-form .form-select:focus {
+        border-color: #9aafc4;
+        box-shadow: 0 0 0 3px rgba(52, 73, 94, 0.10);
+    }
+
+.restaurant-status-box {
+    padding: 16px 18px;
+    background: #f7f9fb;
+    border: 1px solid #e8edf2;
+    border-radius: 9px;
+}
+
+    .restaurant-status-box .form-check-label {
+        font-weight: 500;
+        color: #343a40;
+    }
+
+.restaurant-form-actions {
+    padding-top: 21px;
+    margin-top: 8px;
+    border-top: 1px solid #edf0f2;
+}
+
+    .restaurant-form-actions .btn {
+        min-width: 120px;
+        min-height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+    }
+
+@media (max-width: 767.98px) {
+    .restaurant-edit-card {
+        padding: 23px 18px;
+    }
+
+    .restaurant-form-heading {
+        align-items: flex-start;
+    }
+}
+
+/* Menu category edit form */
+.menu-category-edit-card {
+    padding: 34px 38px;
+}
+
+.menu-category-edit-form textarea.form-control {
+    min-height: 130px;
+    resize: vertical;
+}
+
+@media (max-width: 767.98px) {
+    .menu-category-edit-card {
+        padding: 23px 18px;
+    }
+}
+
+
+/* Menu item edit form */
+.menu-item-edit-card {
+    padding: 34px 38px;
+}
+
+.menu-item-edit-form .form-label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #343a40;
+}
+
+.menu-item-edit-form .form-control,
+.menu-item-edit-form .form-select,
+.menu-item-price-group .input-group-text {
+    min-height: 44px;
+    padding: 10px 13px;
+    border-color: #dfe3e8;
+    border-radius: 8px;
+}
+
+.menu-item-edit-form textarea.form-control {
+    min-height: 115px;
+    resize: vertical;
+}
+
+.menu-item-edit-form .form-control:focus,
+.menu-item-edit-form .form-select:focus {
+    border-color: #9aafc4;
+    box-shadow: 0 0 0 3px rgba(52, 73, 94, 0.10);
+}
+
+.menu-item-price-group .input-group-text {
+    display: flex;
+    align-items: center;
+    background: #f7f9fb;
+    color: #596574;
+    font-weight: 600;
+}
+
+.menu-item-price-group .form-control {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.menu-item-image-preview-box {
+    padding: 17px 18px;
+    background: #f8fafc;
+    border: 1px solid #e8edf2;
+    border-radius: 10px;
+}
+
+.menu-item-preview-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 13px;
+    color: #343a40;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.menu-item-preview-empty {
+    min-height: 125px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #8993a0;
+    font-size: 13px;
+    text-align: center;
+}
+
+    .menu-item-preview-empty i {
+        font-size: 27px;
+    }
+
+@media (max-width: 767.98px) {
+    .menu-item-edit-card {
+        padding: 23px 18px;
+    }
+}
